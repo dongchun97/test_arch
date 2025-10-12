@@ -1,0 +1,86 @@
+test_arch/
+│
+├── configs/                   # 配置参数
+│   ├── csv_mapping.yaml      # csv配置映射
+│   ├── building_forms.yaml      # 建筑形式配置（包含所有屋顶类型）
+│   ├── structural_rules.yaml    # 结构规则（清代构造法则）
+│   └── component_rules.yaml     # 构件规则（柱梁檩比例计算）
+│
+├── data/                       # 数据存储（CSV/XLS）
+│   ├── data.csv                # 构件尺寸数据     
+│   └── data2.xls                # 构件尺寸数据
+│
+├── core/                       # 核心逻辑
+│   ├── __init__.py
+│   ├── loader.py              # data数据加载    def __init__(self, base_dir="./test_arch/")
+│   ├── calculator.py          # 尺寸计算
+│   └── validator.py           # 规则验证 **
+│
+├── geometry/                  # bmesh几何生成
+│   ├── __init__.py
+│   ├── pillar.py              # 柱子bmesh
+│   ├── beam.py                # 梁bmesh  
+│   ├── bracket.py             # 斗拱bmesh
+│   ├── roof.py                # 屋顶bmesh
+│   └── tenon.py               # 榫卯bmesh
+│
+├── structure/                # 逻辑层 - 生成器
+│   ├── __init__.py
+│   ├── placement.py           # 定位坐标规则
+│   ├── collection.py          # 集合与父子关系
+│   ├── assembler.py           # 组装逻辑
+│   └── systems/               # 子系统
+│       ├── pillar_net.py      # 柱网系统
+│       ├── beam_frame.py      # 梁架系统
+│       ├── roof_system.py     # 屋顶系统
+│       └── components/        # 新增：单个构件生成器
+│           ├── pillar.py      # 柱子对象生成
+│           ├── beam.py        # 梁对象生成
+│           ├── purlin.py      # 檩条对象生成
+│           └── rafter.py      # 椽子对象生成
+│
+├── utils/                      # 工具函数
+│   ├── __init__.py
+│   ├── bmesh_utils.py         # bmesh工具
+│   ├── mesh_pool.py           # 网格对象池
+│   ├── naming_service.py      # 命名格式化服务
+│   ├── math_utils.py          # 数学计算
+│   ├── transform.py           # 坐标变换
+│   └── blender_ops.py         # Blender操作
+│
+├── tests/ 
+│   ├── test_structure.py
+│   ├── test_geometry.py
+│   ├── test_components.py
+│   └── test_rules.py
+│
+├── generator.py               # 主生成器
+├── main.py                    # 程序入口
+│
+│   ..........................................................
+│
+├── ai/                              # AI 扩展模块
+│   ├── __init__.py
+│   ├── param_fitter.py              # 参数拟合（根据数据预测斗口、坡度等）
+│   ├── feature_extractor.py         # 特征提取（结构 + 装饰特征）
+│   ├── layout_optimizer.py          # 平面与立面布局优化
+│   └── style_transfer.py            # 风格迁移（唐/宋/清风格自动调整）
+│
+├── io/                              # 输入输出层（与外部系统对接）
+│   ├── __init__.py
+│   ├── ifc_exporter.py              # IFC/BIM 文件导出
+│   ├── cad_exporter.py              # DWG/DXF 工程图导出
+│   ├── svg_generator.py             # 草图生成（参数线稿）
+│   ├── json_io.py                   # JSON、YAML 统一加载器
+│   └── dataset_exporter.py          # 导出AI训练数据集
+│
+├── visualization/                   # 交互与展示层
+│   ├── ui_panel.py
+│   ├── component_panel.py
+│   ├── preset_manager.py
+│   ├── preview_renderer.py
+│   └── engineering_drawer.py        # 生成工程图（线稿 + 尺寸）
+
+
+这是一个使用blender api的传统木结构建筑生成项目，以上是项目设计架构，
+项目中涉及大量的object\mesh\collection以及园林名称、建筑名称、建筑类型等，尤其是mesh会有大量复用，给我一个规范化的命名规则

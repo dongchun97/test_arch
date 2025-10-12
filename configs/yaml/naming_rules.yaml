@@ -1,0 +1,73 @@
+# 命名规则配置
+naming_system:
+  separator: "_"               # 分隔符
+  encoding: "utf-8"            # 编码
+
+# 对象命名模板
+object_templates:
+  pillar:
+    template: "{garden_id}{separator}{building_id}{separator}{bay_width}{separator}{style}{separator}{position}"
+    required_fields: ["garden_id", "building_id", "bay_width", "style", "position"]
+    description: "柱子对象命名：园林_建筑_面阔_样式_位置"
+    
+  beam:
+    template: "{garden_id}{separator}{building_id}{separator}{beam_type}{separator}{span}"
+    required_fields: ["garden_id", "building_id", "beam_type", "span"]
+    description: "梁对象命名：园林_建筑_梁类型_跨度"
+    
+  roof:
+    template: "{garden_id}{separator}{building_id}{separator}{roof_type}"
+    required_fields: ["garden_id", "building_id", "roof_type"]
+    description: "屋顶对象命名：园林_建筑_屋顶类型"
+
+  dougong_set:
+    template: "{garden_id}{separator}{building_id}{separator}{dougong_type}{separator}{position}"
+    required_fields: ["garden_id", "building_id", "dougong_type", "position"]
+    description: "斗拱组命名：园林_建筑_斗拱类型_位置"
+
+# 网格命名模板（用于mesh池复用）
+mesh_templates:
+  pillar:
+    template: "MESH_{bay_width}{separator}{style}{separator}{diameter}x{height}"
+    key_fields: ["bay_width", "style", "diameter", "height"]
+    description: "柱子网格：MESH_面阔_样式_直径x高度"
+    
+  beam:
+    template: "MESH_{beam_type}{separator}{length}x{width}x{height}"
+    key_fields: ["beam_type", "length", "width", "height"]
+    description: "梁网格：MESH_梁类型_长x宽x高"
+
+# 集合命名模板
+collection_templates:
+  building:
+    template: "COL_{garden_id}{separator}{building_id}"
+    description: "建筑集合：COL_园林_建筑"
+    
+  pillars:
+    template: "COL_{garden_id}{separator}{building_id}{separator}PILLARS"
+    description: "柱网集合：COL_园林_建筑_PILLARS"
+    
+  beams:
+    template: "COL_{garden_id}{separator}{building_id}{separator}BEAMS"
+    description: "梁架集合：COL_园林_建筑_BEAMS"
+
+# 字段别名和格式化规则
+# field_aliases:
+#   garden_id: 
+#     pattern: "YL\d{3}"
+#     example: "YL001"
+#   building_id:
+#     pattern: "BJ\d{3}"
+#     example: "BJ001"
+#   bay_width:
+#     format: "{value}K"         # 3 → "3K"
+#   position:
+#     corner: "C{index}"         # 角柱
+#     eave: "E{index}"           # 檐柱
+#     gold: "G{index}"           # 金柱
+
+# # 保留字和约束
+# constraints:
+#   max_length: 64
+#   forbidden_chars: ["/", "\\", ":", "*", "?", "\"", "<", ">", "|"]
+#   reserved_names: ["Collection", "Scene", "Camera", "Light"]

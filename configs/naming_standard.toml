@@ -1,0 +1,38 @@
+# 统一命名标准 - 确保所有配置文件使用相同的英文名称
+
+# 建筑形式
+[building_forms]
+hard_hill = "硬山"
+hanging_hill = "悬山"
+hip_roof = "歇山"
+hip_roof_palace = "庑殿"
+pyramidal_roof = "攒尖"
+roll_shed_roof = "卷棚"
+
+# 开间类型
+[bay_types]
+main_bay = "明间"
+side_bay = "次间"
+secondary_side_bay = "二次间"
+tertiary_side_bay = "三次间"
+quaternary_side_bay = "四次间"
+end_bay = "梢间"
+
+# 结构构件
+[structural_components]
+eave_column = "檐柱"
+gold_column = "金柱"
+corner_column = "角柱"
+eave_purlin = "檐檩"
+gold_purlin = "金檩"
+ridge_purlin = "脊檩"
+
+# 尺寸术语
+[dimension_terms]
+total_width = "通面阔"
+total_depth = "通进深"
+eave_step = "檐步架"
+gold_step = "金步架"
+ridge_step = "脊步架"
+upper_overhang = "上出"
+lower_overhang = "下出"

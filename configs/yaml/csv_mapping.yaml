@@ -1,0 +1,56 @@
+# CSV列映射配置
+csv_header_mapping:
+  # 集合级别字段
+  collection_levels:
+    level_1:
+      name: "一级集合"
+      description: "园林级别集合"
+      fields: ["园林名称", "园中园编号", "园中园名称"]
+      separator: "_"
+      naming_template: "YARD_{园林名称}_{园中园编号}_{园中园名称}"
+    
+    level_2:
+      name: "二级集合" 
+      description: "建筑级别集合"
+      fields: ["建筑编号", "建筑名称"]
+      separator: "_"
+      naming_template: "ARCH_{建筑编号}_{建筑名称}"
+  
+  # 建筑配置字段
+  building_config:
+    category: "配置信息"
+    fields: ["建筑形式", "出廊", "楹", "描述1"]
+  
+  # 几何数据字段
+  geometry_data:
+    category: "初始化信息"
+    fields: ["明间", "次间", "二次间", "三次间", "四次间", "通进深", "檐步架"]
+  
+  # 标注尺寸字段
+  dimension_data:
+    category: "标注尺寸"
+    fields: ["标注檐柱高", "标注柱径", "标注台明高", "标注上出", "标注下出"]
+
+# 字段别名（用于程序内部使用）
+field_aliases:
+  "园林名称": "garden_name"
+  "园中园编号": "sub_garden_code"
+  "园中园名称": "sub_garden_name"
+  "建筑编号": "building_code"
+  "建筑名称": "building_name"
+  "建筑形式": "building_form"
+  "出廊": "corridor_type"
+  "楹": "bay_count"
+  "描述1": "description"
+  "明间": "bay_0rd"
+  "次间": "bay_1rd"
+  "二次间": "bay_2rd"
+  "三次间": "bay_3rd"
+  "四次间": "bay_4rd"
+  "通进深": "total_depth"
+  "檐步架": "eave_step"
+  "标注檐柱高": "eave_column_height"
+  "标注柱径": "column_diameter"
+  "标注台明高": "platform_height"
+  "标注上出": "eave_overhang"
+  "标注下出": "platform_overhang"

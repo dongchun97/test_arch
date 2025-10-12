@@ -1,0 +1,30 @@
+# 建筑形式配置
+[building_forms."四檩悬山"]
+roof_type = "xuanshan"
+structural_style = "small"
+typical_beams = 4
+allowed_corridors = ["无廊", "前廊", "后廊", "前后廊"]
+
+[building_forms."四檩悬山卷棚"]
+roof_type = "xuanshan_juanpeng"
+structural_style = "small"
+typical_beams = 4
+lift_system = "juanpeng"
+allowed_corridors = ["无廊", "前廊", "后廊", "前后廊"]
+
+[building_forms."六檩悬山"]
+roof_type = "xuanshan"
+structural_style = "small"
+typical_beams = 6
+allowed_corridors = ["无廊", "前廊", "后廊", "前后廊"]
+
+# 屋顶类型特征
+[roof_types.xuanshan]
+name = "悬山顶"
+has_overhang = true
+ridge_type = "straight"
+
+[roof_types.xuanshan_juanpeng]
+name = "悬山卷棚顶"
+has_overhang = true
+ridge_type = "roll"

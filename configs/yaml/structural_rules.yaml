@@ -1,0 +1,29 @@
+qing_dynasty_rules:
+  # 模数系统
+  modular_systems:
+    small_style:
+      base_unit: "column_diameter"
+      description: "小式建筑以柱径为模数"
+      
+    large_style:
+      base_unit: "doukou" 
+      description: "大式建筑以斗口为模数"
+
+  # 平面布局规则 - 在程序中动态计算
+  layout_principles:
+    # 开间比例规则（基于您的明间、次间数据）
+    bay_ratios:
+      mingjian: 1.0
+      cijian: 0.85
+      ercijian: 0.7
+      sancijian: 0.6
+    
+    # 进深规则
+    depth_ratios:
+      step_frame_to_column: 0.3  # 步架/檐柱高 ≈ 0.3-0.5
+      total_depth_to_width: 0.7  # 通进深/通面阔 ≈ 0.7
+
+  # 举架规则
+  lift_systems:
+    four_beam: [0.5, 0.7, 1.0]      # 四檩举架
+    six_beam: [0.5, 0.65, 0.75, 0.9, 1.0]  # 六檩举架

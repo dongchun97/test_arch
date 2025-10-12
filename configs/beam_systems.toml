@@ -1,0 +1,29 @@
+# 檩架系统配置
+[beam_systems.4]
+name = "四檩架"
+beam_names = ["檐檩", "脊檩"]
+step_count = 2
+lift_ratios = [0.5, 1.0]
+step_frame_ratios = [0.5, 0.5]
+description = "用于四檩卷棚等小型建筑"
+
+[beam_systems.5]
+name = "五檩架"
+beam_names = ["檐檩", "金檩", "脊檩"]
+step_count = 3
+lift_ratios = [0.5, 0.7, 1.0]
+step_frame_ratios = [0.4, 0.3, 0.3]
+description = "标准五檩举架"
+
+[beam_systems.6]
+name = "六檩架"
+beam_names = ["檐檩", "下金檩", "上金檩", "脊檩"]
+step_count = 4
+lift_ratios = [0.5, 0.65, 0.8, 1.0]
+step_frame_ratios = [0.3, 0.25, 0.25, 0.2]
+description = "用于六檩前后廊建筑"
+
+# 特殊举架规则
+[special_lift_systems.juanpeng]
+4 = [0.4, 0.8]
+6 = [0.4, 0.6, 0.8, 1.0]

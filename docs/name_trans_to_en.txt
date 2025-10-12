@@ -1,0 +1,198 @@
+硬山/悬山 (Hard Hill & Hanging Hill Roof)————————————————
+# 基础结构
+platform_masonry_base = None  # 台明
+column_base_stone = None  # 柱顶石
+step_strip = None  # 阶条
+ramp_handrail_slab = None  # 垂带
+step_stairs = None  # 踏跺
+
+# 柱类
+eave_column = None  # 檐柱
+principal_column = None  # 金柱
+
+# 梁枋类
+eave_architrave = None  # 檐枋
+eave_spacer_block = None  # 檐垫板
+eave_purlin = None  # 檐檩
+principal_architrave = None  # 金枋
+principal_spacer_block = None  # 金垫板
+principal_purlin = None  # 金檩
+ridge_architrave = None  # 脊枋
+ridge_spacer_block = None  # 脊垫板
+ridge_purlin = None  # 脊檩
+penetrating_tie_beam = None  # 穿插枋
+embracing_head_beam = None  # 抱头梁
+following_beam = None  # 随梁枋
+five_purlin_beam = None  # 五架梁
+three_purlin_beam = None  # 三架梁
+
+# 支撑构件
+ridge_short_column = None  # 脊瓜柱
+ridge_diagonal_brace = None  # 脊角背
+principal_short_column = None  # 金瓜柱
+
+# 椽望系统
+eave_rafter = None  # 檐椽
+upper_rafter = None  # 脑椽
+intermediate_rafter = None  # 花架椽
+flying_rafter = None  # 飞椽
+small_connecting_eaves = None  # 小连檐
+large_connecting_eaves = None  # 大连檐
+roof_sheathing = None  # 望板
+
+
+庑殿 (Hip Roof)————————————————
+# 柱类
+eave_column = None  # 檐柱
+corner_eave_column = None  # 角檐柱
+principal_column = None  # 金柱
+
+# 梁类
+embracing_head_beam = None  # 抱头梁
+parallel_beam = None  # 顺梁
+intersecting_principal_short_column = None  # 交金瓜柱
+five_purlin_beam = None  # 五架梁
+three_purlin_beam = None  # 三架梁
+taiping_beam = None  # 太平梁
+leigong_column = None  # 雷公柱
+ridge_short_column = None  # 脊瓜柱
+diagonal_brace = None  # 角背
+
+# 角梁系统
+corner_beam = None  # 角梁
+corner_ridge_support = None  # 由戗
+ridge_corner_ridge_support = None  # 脊由戗
+cross_beam = None  # 趴梁
+
+# 枋垫板檩
+eave_architrave = None  # 檐枋
+eave_spacer_block = None  # 檐垫板
+eave_purlin = None  # 檐檩
+lower_principal_architrave = None  # 下金枋
+lower_principal_spacer_block = None  # 下金垫板
+lower_principal_purlin = None  # 下金檩
+upper_principal_architrave = None  # 上金枋
+upper_principal_spacer_block = None  # 上金垫板
+upper_principal_purlin = None  # 上金檩
+ridge_architrave = None  # 脊枋
+ridge_spacer_block = None  # 脊垫板
+ridge_purlin = None  # 脊檩
+
+# 脊部构件
+ridge_support_timber = None  # 扶脊木
+ridge_pile = None  # 脊桩
+
+
+歇山 (Hip-Gable Roof)————————————————
+# 柱类
+eave_column = None  # 檐柱
+corner_eave_column = None  # 角檐柱
+principal_column = None  # 金柱
+
+# 梁架系统
+parallel_beam = None  # 顺梁
+embracing_head_beam = None  # 抱头梁
+intersecting_principal_pier = None  # 交金墩
+step_gold_beam = None  # 踩步金
+three_purlin_beam = None  # 三架梁
+footing_timber = None  # 踏脚木
+penetrating_tie = None  # 穿
+rough_frame_column = None  # 草架柱
+five_purlin_beam = None  # 五架梁
+corner_beam = None  # 角梁
+
+# 枋垫板檩
+eave_architrave = None  # 檐枋
+eave_spacer_block = None  # 檐垫板
+eave_purlin = None  # 檐檩
+lower_principal_architrave = None  # 下金枋
+lower_principal_spacer_block = None  # 下金垫板
+lower_principal_purlin = None  # 下金檩
+upper_principal_architrave = None  # 上金枋
+upper_principal_spacer_block = None  # 上金垫板
+upper_principal_purlin = None  # 上金檩
+ridge_architrave = None  # 脊枋
+ridge_spacer_block = None  # 脊垫板
+ridge_purlin = None  # 脊檩
+ridge_support_timber = None  # 扶脊木
+
+
+攒尖 (Pyramid/Pavilion Roof)————————————————
+eave_column = None  # 檐柱
+column_base_stone = None  # 柱顶石
+bench_seat_surface = None  # 坐凳面
+eave_purlin = None  # 檐檩
+corner_cloud = None  # 角云
+eave_architrave = None  # 檐枋
+bevel_corner_beam = None  # 抹角梁
+cross_beam = None  # 趴梁
+principal_purlin = None  # 金檩
+leigong_column = None  # 雷公柱
+corner_ridge_support = None  # 由戗
+
+
+其他属性 (Other Attributes)————————————————
+# 基本信息
+garden_name = None  # 园林名称
+garden_within_garden_number = None  # 园中园编号
+garden_within_garden_name = None  # 园中园名称
+garden_within_garden_regional_attribute = None  # 园中园区域属性
+building_number = None  # 建筑编号
+building_name = None  # 建筑名称
+
+# 技术参数
+model_precision = None  # 模型精度
+construction_type = None  # 构造
+combination = None  # 组合
+doukou = None  # 斗口
+veranda_type = None  # 出廊
+roof_ridge_shortening = None  # 收山
+purlin = None  # 檩
+
+# 描述属性
+description_form = None  # 描述1-形态
+description_orientation = None  # 描述2-朝向
+description_grade = None  # 描述3-等级
+description_bay_count = None  # 描述4-楹
+description_gable_wall_type = None  # 描述5-山墙
+description_bracket_set_type = None  # 描述6-斗拱
+description_7 = None  # 描述7
+
+# 空间尺寸
+bay_0 = None  # 明间
+bay_1 = None  # 次间
+bay_2 = None  # 二次间
+bay_3 = None  # 三次间
+bay_4 = None  # 四次间
+total_depth = None  # 通进深
+eave_step = None  # 檐步架
+
+# 标注尺寸
+annotated_eave_column_height = None  # 标注檐柱高
+annotated_column_diameter = None  # 标注柱径
+annotated_platform_base_height = None  # 标注台明高
+annotated_roof_overhang = None  # 标注上出
+annotated_platform_projection = None  # 标注下出
+
+# 材料类型
+brick_category = None  # 砖类别
+tile_category = None  # 瓦类别
+stone_category = None  # 石类别
+step_stairs_type = None  # 踏跺类型
+
+# 装修
+front_bay_0 = None  # 前檐装修明间
+front_bay_1 = None  # 前檐装修次间_1
+front_bay_2 = None  # 前檐装修次间_2
+front_bay_3 = None  # 前檐装修次间_3
+rear_bay_0 = None  # 后檐装修明间
+rear_bay_1 = None  # 后檐装修次间_1
+rear_bay_2 = None  # 后檐装修二次间_2
+rear_bay_3 = None  # 后檐装修三次间_3
+
+# 坐标
+x_coordinate = None  # X坐标
+y_coordinate = None  # Y坐标
+z_coordinate = None  # Z坐标
+
+
