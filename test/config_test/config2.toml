@@ -1,0 +1,11 @@
+# 先声明“继承”谁
+_base = "config1.toml"
+
+[building]
+# 只改需要变的
+roof_type = "庑殿"
+dougong = false
+
+[dimensions]
+bay_num = 7          # 面阔七间
+height = 8.5         # 新增字段

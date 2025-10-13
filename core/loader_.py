@@ -2,7 +2,7 @@
 import numpy as np
 import os
 import yaml, json
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 path = os.path.dirname(os.path.dirname(__file__))
 
@@ -343,7 +343,7 @@ if __name__ == "__main__":
     # print(naming_rules.get("object_templates"))
 
     # 创建加载器
-    loader = DataLoader("./test_arch/data/data.csv")
+    loader = DataLoader("./data/data.csv")
     loader.load_csv()
 
     # 获取第一个建筑的数据

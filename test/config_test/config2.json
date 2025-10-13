@@ -1,0 +1,7 @@
+{
+    "base": "base_config.json",
+    "additional": {
+        "height": "200m",
+        "color": "Gray"
+    }
+}
