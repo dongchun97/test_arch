@@ -1,22 +1,25 @@
-[csv_header_mapping]
+[mapping]
 
-[csv_header_mapping.collection_levels.level_1]
-name = "level_1_collection"
+[mapping.garden]
+name = "garden"
 fields = ["园林名称", "园中园编号", "园中园名称"]
 naming_template = "COL_{园林名称}_{园中园编号}_{园中园名称}"
 
-[csv_header_mapping.collection_levels.level_2]
-name = "level_2_collection"
+[mapping.arch]
+name = "arch"
 fields = ["建筑编号", "建筑名称"]
 naming_template = "COL_{建筑编号}_{建筑名称}"
 
-[csv_header_mapping.building_config]
+[mapping.arch.shape]
 fields = ["建筑形式", "出廊", "楹", "描述1"]
 
-[csv_header_mapping.geometry_data]
-fields = ["明间", "次间", "二次间", "三次间", "四次间", "通进深", "檐步架"]
+[mapping.arch.bay]
+fields = ["明间", "次间", "二次间", "三次间", "四次间"]
 
-[csv_header_mapping.dimension_data]
+[mapping.arch.depth]
+fields = ["通进深", "檐步架"]
+
+[mapping.arch.height]
 fields = ["标注檐柱高", "标注柱径", "标注台明高", "标注上出", "标注下出"]
 
 [field_aliases]
