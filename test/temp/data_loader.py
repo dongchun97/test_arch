@@ -223,7 +223,7 @@ class DataLoader:
 # 示例用法
 if __name__ == "__main__":
     # 创建加载器
-    loader = DataLoader("data/data.csv")
+    loader = DataLoader("data/data-2.csv")
     loader.load_csv()
 
     # 获取第一个建筑的数据

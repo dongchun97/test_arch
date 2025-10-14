@@ -1,18 +1,25 @@
-# 生成建筑的逻辑
-def generate_building_from_csv(row):
-    # 1. 识别建筑类型
-    building_type = identify_building_type(row['建筑形式'], row['描述1'])
+# generator/generator.py
+from core import DataLoader
+# from utils import NamingService
+# from structure import Assembler
+
+def process_data_file(file_path):
+    """主流程协调器"""
+    # 1. 加载数据
+    loader = DataLoader(file_path)
+    return loader
     
-    # 2. 获取配置
-    type_config = loader.load_building_type(building_type)
-    roof_config = loader.load_roof_system(row['建筑形式'])
-    structural_rules = loader.load_structural_rules('qing_dynasty')
+    # 2. 标准化命名
+    # naming_service = NamingService('configs/naming_standard.toml')
+    # standardized_data = naming_service.standardize_columns(raw_data)
     
-    # 3. 计算尺寸（基于面阔比例）
-    dimensions = calculate_dimensions(
-        row['明间'], row['次间'], row['通进深'],
-        type_config, structural_rules
-    )
+    # # 3. 结构化数据
+    # structurer = Assembler()
+    # structured_objects = structurer.create_objects(standardized_data)
     
-    # 4. 生成建筑
-    return assembler.assemble(type_config, roof_config, dimensions)
+    # 4. 返回或保存结果
+    # return structured_objects
+
+# 提供简化接口
+def generator(file_path):
+    return process_data_file(file_path)

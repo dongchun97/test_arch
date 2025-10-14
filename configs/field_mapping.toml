@@ -22,6 +22,25 @@ fields = ["通进深", "檐步架"]
 [mapping.arch.height]
 fields = ["标注檐柱高", "标注柱径", "标注台明高", "标注上出", "标注下出"]
 
+
+# [building_forms]
+# [building_forms."硬山"]
+# [building_forms."歇山"]
+# hip_roof = "歇山"
+
+[corridor_types]
+"无廊" = "none"
+"前出廊" = "front_corridor" 
+"前后廊" = "both_side_corridor"
+"周围廊" = "surround_corridor"
+
+[building_positions]
+"正房" = "main_house"
+"厢房" = "side_house"
+"耳房" = "annex_house"
+"倒座房" = "reversed_house"
+"后罩房" = "back_house"
+
 [field_aliases]
 "园林名称" = "garden_name"
 "园中园编号" = "garden_id"

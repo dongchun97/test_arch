@@ -1,0 +1,31 @@
+test_arch/
+│
+├── __init__.py                  
+├── configs/                   
+│   ├── __init__.py
+│
+├── data/                       # 数据存储（CSV/XLS）
+│   ├── data.csv                # 构件尺寸数据     
+│   └── data2.xls                # 构件尺寸数据
+│
+├── core/                       # 核心逻辑
+│   ├── __init__.py
+│   ├── loader.py              
+│   ├── calculator.py          # 尺寸计算
+│
+├── geometry/                  # bmesh几何生成
+│   ├── __init__.py
+│
+├── structure/                # 逻辑层 - 生成器
+│   ├── __init__.py
+│   └── systems/               # 子系统
+│       ├── __init__.py
+│
+├── utils/                      # 工具函数
+│   ├── __init__.py
+│
+├── tests/ 
+│   └── test_rules.py
+│
+├── generator.py               # 主生成器
+├── main.py                    # 程序入口

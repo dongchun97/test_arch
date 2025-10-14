@@ -7,7 +7,6 @@ hanging_hill = "悬山"
 hip_roof = "歇山"
 hip_roof_palace = "庑殿"
 pyramidal_roof = "攒尖"
-roll_shed_roof = "卷棚"
 
 # 开间类型
 [bay_types]

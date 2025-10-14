@@ -1,20 +1,23 @@
 test_arch/
 │
 ├── configs/                   # 配置参数
-│   ├── csv_mapping.yaml      # csv配置映射
-│   ├── building_forms.yaml      # 建筑形式配置（包含所有屋顶类型）
-│   ├── structural_rules.yaml    # 结构规则（清代构造法则）
-│   └── component_rules.yaml     # 构件规则（柱梁檩比例计算）
+│   ├── __init__.py
+│   ├── config_manager.py      
+│   ├── field_mapping.toml       # csv配置映射
+│   ├── building_forms.toml      # 建筑形式配置（包含所有屋顶类型）
+│   ├── naming_standard.toml     # 命名标准
+│   ├── geometry_rules.toml      # 构件尺寸数据（bmesh）
+│   ├── structural_rules.toml    # 结构规则（清代构造法则）
+│   └── component_rules.toml     # 构件规则（柱梁檩比例计算）
 │
-├── data/                       # 数据存储（CSV/XLS）
-│   ├── data.csv                # 构件尺寸数据     
-│   └── data2.xls                # 构件尺寸数据
+├── data/                        # 数据存储（CSV/XLS）
+│   ├── data.csv                 # 园林建筑基本数据，每一行代表一个建筑     
+│   └── data2.xls                # 园林建筑基本数据，每一行代表一个建筑     
 │
 ├── core/                       # 核心逻辑
 │   ├── __init__.py
-│   ├── loader.py              # data数据加载    def __init__(self, base_dir="./test_arch/")
-│   ├── calculator.py          # 尺寸计算
-│   └── validator.py           # 规则验证 **
+│   ├── loader.py              # data数据加载
+│   └── calculator.py          # 尺寸计算
 │
 ├── geometry/                  # bmesh几何生成
 │   ├── __init__.py
@@ -24,7 +27,7 @@ test_arch/
 │   ├── roof.py                # 屋顶bmesh
 │   └── tenon.py               # 榫卯bmesh
 │
-├── structure/                # 逻辑层 - 生成器
+├── structure/                # 逻辑层 - 对象生成器
 │   ├── __init__.py
 │   ├── placement.py           # 定位坐标规则
 │   ├── collection.py          # 集合与父子关系
@@ -43,16 +46,10 @@ test_arch/
 │   ├── __init__.py
 │   ├── bmesh_utils.py         # bmesh工具
 │   ├── mesh_pool.py           # 网格对象池
-│   ├── naming_service.py      # 命名格式化服务
-│   ├── math_utils.py          # 数学计算
-│   ├── transform.py           # 坐标变换
-│   └── blender_ops.py         # Blender操作
+│   └── naming_service.py      # 命名格式化服务
 │
 ├── tests/ 
-│   ├── test_structure.py
-│   ├── test_geometry.py
-│   ├── test_components.py
-│   └── test_rules.py
+│   └── test
 │
 ├── generator.py               # 主生成器
 ├── main.py                    # 程序入口

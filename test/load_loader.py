@@ -1,5 +1,5 @@
 import numpy as np
-import toml
+import tomllib
 
 
 class DataLoader:

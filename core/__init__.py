@@ -1,1 +1,1 @@
-from .loader import DataLoader, ConfigLoader
+from .loader import DataLoader

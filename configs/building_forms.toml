@@ -1,30 +1,62 @@
-# 建筑形式配置
-[building_forms."四檩悬山"]
-roof_type = "xuanshan"
-structural_style = "small"
-typical_beams = 4
-allowed_corridors = ["无廊", "前廊", "后廊", "前后廊"]
+# ======================
+# 1. 元数据部分
+# ======================
+[metadata]
+version = "1.0.0"
+created_date = 2024-01-15
+description = "古建筑形式分类配置"
 
-[building_forms."四檩悬山卷棚"]
-roof_type = "xuanshan_juanpeng"
-structural_style = "small"
-typical_beams = 4
-lift_system = "juanpeng"
-allowed_corridors = ["无廊", "前廊", "后廊", "前后廊"]
+# ======================
+# 2. 分类定义部分
+# ======================
+[building_categories]
+"庑殿" = "hip_roof_palace"
+"歇山" = "hip_roof"
+"硬山" = "hard_hill" 
+"悬山" = "hanging_hill"
+"攒尖" = "pyramidal_roof"
+"杂式建筑" = "miscellaneous"
 
-[building_forms."六檩悬山"]
-roof_type = "xuanshan"
-structural_style = "small"
-typical_beams = 6
-allowed_corridors = ["无廊", "前廊", "后廊", "前后廊"]
 
-# 屋顶类型特征
-[roof_types.xuanshan]
-name = "悬山顶"
-has_overhang = true
-ridge_type = "straight"
+# ======================
+# 3. 建筑形式数据部分
+# ======================
+[building_forms."八檩卷棚"]
+name = "八檩卷棚"
+category = "悬山"
+code = "eight_purlin_roll_shed"
+purlin_count = 8
+is_dashi = true
+is_doukou = false
+is_roll = true
+eave_type = "single"
 
-[roof_types.xuanshan_juanpeng]
-name = "悬山卷棚顶"
-has_overhang = true
-ridge_type = "roll"
+[building_forms."九檩单檐"]
+name = "九檩单檐"
+category = "庑殿"
+code = "nine_purlin_single_eave"
+purlin_count = 9
+is_dashi = true
+is_doukou = true
+is_roll = false
+eave_type = "single"
+# ... 其他建筑形式
+
+# ======================
+# 4.显示文本映射
+# ======================
+[display_mapping.is_dashi]
+true = "大式"
+false = "小式"
+
+[display_mapping.is_doukou]
+true = "斗口制"
+false = "檐柱径制"
+
+[display_mapping.is_roll]
+true = "卷棚"
+false = "大屋脊"
+
+[display_mapping.eave_type]
+"single" = "单檐"
+"double" = "重檐"
