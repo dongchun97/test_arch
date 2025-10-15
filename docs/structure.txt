@@ -45,8 +45,7 @@ test_arch/
 ├── utils/                      # 工具函数
 │   ├── __init__.py
 │   ├── bmesh_utils.py         # bmesh工具
-│   ├── mesh_pool.py           # 网格对象池
-│   └── naming_service.py      # 命名格式化服务
+│   └──mesh_pool.py           # 网格对象池
 │
 ├── tests/ 
 │   └── test
