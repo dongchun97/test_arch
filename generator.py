@@ -1,6 +1,6 @@
 # generator/generator.py
 from core import DataLoader
-# from utils import NamingService
+from core import generate_frame_geometry
 # from structure import Assembler
 
 def process_data_file(file_path):
@@ -23,3 +23,17 @@ def process_data_file(file_path):
 # 提供简化接口
 def generator(file_path):
     return process_data_file(file_path)
+
+
+if __name__ == "__main__":
+    loader=process_data_file("data/data-2.csv")
+    data=loader.get_building_data(1)
+
+    purlin,dimension,*_=data['dimension_info'].values()
+    print(dimension)
+    # generate_frame_geometry(dimensions)
+
+
+    # # 获取第一个建筑的数据
+    # building = loader.get_building_data(1)
+    # print(building)

@@ -1,85 +1,107 @@
-class BasicPlanCalculator:
-    def __init__(self, config_loader):
-        self.base_rules = config_loader.load_config("base_rules")
+import math
 
-    def generate_basic_column_network(self, csv_data):
-        """生成基本柱网"""
-        # 从CSV数据获取
-        columns_count = csv_data["config"]["columns_count"]  # 楹数
-        beam_count = self._detect_beam_count(
-            csv_data["config"]["building_form"]
-        )  # 檩数
-        main_bay = csv_data["geometry"]["main_bay"]  # 明间
-        total_depth = csv_data["geometry"]["total_depth"]  # 通进深
+def generate_frame_geometry(num_lintels, num_bays, bay_widths, depth_total, eave_step, D, symmetry=True):
+    """
+    根据建筑基本参数生成平面柱网与梁枋坐标。
+    支持左右对称、输出梁枋长度与定位数据。
 
-        # 1. 生成开间方向柱位
-        bay_columns = self._generate_bay_columns(columns_count, main_bay)
+    参数:
+        num_lintels (int): 檩数（进深方向柱列数）
+        num_bays (int): 楹数（面阔方向柱列数）
+        bay_widths (list[float]): 开间宽度数组（从明间起）
+        depth_total (float): 通进深（不含檐步架）
+        eave_step (float): 檐步架尺寸
+        D (float): 檐柱径
+        symmetry (bool): 是否对称展开（默认True）
 
-        # 2. 生成进深方向柱位
-        depth_columns = self._generate_depth_columns(beam_count, total_depth)
+    返回:
+        dict: 包含x_grid, y_grid, pillar_coords, beam_data
+    """
 
-        # 3. 组合成立体柱网
-        return self._combine_3d_network(bay_columns, depth_columns)
+    # 1️⃣ 面阔方向坐标
+    if symmetry:
+        # 假设 bay_widths 中第一个是明间宽度，后续依次是次间宽度
+        half_bays = bay_widths[::-1]  # 反转后方便对称
+        full_bays = half_bays + bay_widths[1:]
+    else:
+        full_bays = bay_widths
 
-    def _generate_bay_columns(self, columns_count, main_bay):
-        """生成开间方向柱位"""
-        # 简单的等分计算，实际应该用开间比例
-        total_columns = columns_count + 1  # 柱子数 = 开间数 + 1
-        column_positions = []
+    x_grid = [0.0]
+    for w in full_bays:
+        x_grid.append(x_grid[-1] + w)
 
-        for i in range(total_columns):
-            position_x = i * main_bay  # 简化计算
-            column_type = self._get_bay_column_type(i, columns_count)
-            column_positions.append(
-                {
-                    "type": column_type,
-                    "position_x": position_x,
-                    "is_corner": i == 0 or i == total_columns - 1,
-                }
-            )
+    # 中心归零对齐
+    x_mid = (x_grid[-1] - x_grid[0]) / 2
+    x_grid = [x - x_mid for x in x_grid]
 
-        return column_positions
+    # 2️⃣ 进深方向坐标
+    if num_lintels == 6:
+        depth_segments = [eave_step, 0.5, D * 3, 0.5, eave_step]
+    else:
+        inner_depth = depth_total - 2 * eave_step
+        seg = inner_depth / (num_lintels - 2)
+        depth_segments = [eave_step] + [seg] * (num_lintels - 2) + [eave_step]
 
-    def _generate_depth_columns(self, beam_count, total_depth):
-        """生成进深方向柱位"""
-        beam_system = self.base_rules["basic_plan"]["depth_system"]["beam_systems"][
-            str(beam_count)
-        ]
-        column_sequence = beam_system["column_sequence"]
+    y_grid = [0.0]
+    for d in depth_segments:
+        y_grid.append(y_grid[-1] + d)
 
-        step_length = total_depth / (beam_count - 1)  # 步架长度
-        column_positions = []
+    # 同样中心对齐
+    y_mid = (y_grid[-1] - y_grid[0]) / 2
+    y_grid = [y - y_mid for y in y_grid]
 
-        for i, column_type in enumerate(column_sequence):
-            position_y = i * step_length
-            column_config = self.base_rules["basic_plan"]["column_types"][column_type]
+    # 3️⃣ 柱坐标
+    pillar_coords = [(x, y) for x in x_grid for y in y_grid]
 
-            column_positions.append(
-                {
-                    "type": column_type,
-                    "name": column_config["name"],
-                    "position_y": position_y,
-                    "is_grounded": column_config["is_grounded"],
-                    "is_melon_column": column_config["is_melon_column"],
-                }
-            )
+    # 4️⃣ 梁、枋长度与坐标线
+    # 面阔梁：沿x方向（前后檩之间）
+    beam_x = []
+    for yi in y_grid:
+        for i in range(len(x_grid) - 1):
+            beam_x.append({
+                "start": (x_grid[i], yi),
+                "end": (x_grid[i + 1], yi),
+                "length": x_grid[i + 1] - x_grid[i],
+                "dir": "x"
+            })
 
-        return column_positions
+    # 进深梁：沿y方向（左右楹之间）
+    beam_y = []
+    for xi in x_grid:
+        for j in range(len(y_grid) - 1):
+            beam_y.append({
+                "start": (xi, y_grid[j]),
+                "end": (xi, y_grid[j + 1]),
+                "length": y_grid[j + 1] - y_grid[j],
+                "dir": "y"
+            })
 
-    def _combine_3d_network(self, bay_columns, depth_columns):
-        """组合成立体柱网"""
-        all_columns = []
+    return {
+        "x_grid": x_grid,
+        "y_grid": y_grid,
+        "pillar_coords": pillar_coords,
+        "beam_data": {
+            "x_beams": beam_x,
+            "y_beams": beam_y
+        }
+    }
 
-        for bay_col in bay_columns:
-            for depth_col in depth_columns:
-                column_3d = {
-                    "name": f"{depth_col['name']}_{bay_col['position_x']}",
-                    "type": depth_col["type"],
-                    "position": (bay_col["position_x"], depth_col["position_y"], 0),
-                    "is_grounded": depth_col["is_grounded"],
-                    "is_melon_column": depth_col["is_melon_column"],
-                    "is_corner": bay_col["is_corner"],
-                }
-                all_columns.append(column_3d)
 
-        return all_columns
+
+
+if __name__=="__main__":
+    result = generate_frame_geometry(
+        num_lintels=6,
+        num_bays=5,
+        bay_widths=[1.2, 1.0, 1.0],
+        depth_total=2.3,
+        eave_step=0.4,
+        D=0.1,
+        symmetry=True
+    )
+
+    print("X坐标:", result["x_grid"])
+    print("Y坐标:", result["y_grid"])
+    print("柱数:", len(result["pillar_coords"]))
+    print("面阔梁数:", len(result["beam_data"]["x_beams"]))
+    print("进深梁数:", len(result["beam_data"]["y_beams"]))
