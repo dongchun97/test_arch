@@ -139,7 +139,7 @@ if __name__ == "__main__":
     loader = DataLoader("data/data-2.csv")
     # loader.load_csv()
     # array=loader.data
-    print(loader.data)
+    print(loader.get_building_data(1))
 
 
     # 获取第一个建筑的数据

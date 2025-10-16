@@ -7,22 +7,20 @@ default_language = "chinese"
 
 
 # 术语内容
-[geo."柱"]
-"檐柱" = { name = "eave-pillar", is_grounded = true, is_melon_column = false }
+[geometry]
+"檐柱" = "eave-pillar"
 "金柱" = "gold-pillar"
 "中柱" = "center-pillar"
 "山柱" = "gable-pillar"
 
-[geo."梁"]
 "五架梁" = "beam-5rd"
 "三架梁" = "beam-3rd"
 "月梁" = "crescent-beam"
 
-[geo."枋"]
 "额枋" = "architrave"
 "随梁枋" = "tie-beam"
 
-[geo."屋顶"]
+
 "庑殿顶" = "hipped-roof"
 "歇山顶" = "hip-gable-roof"
 "硬山顶" = "hard-gable-roof"

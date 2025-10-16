@@ -8,13 +8,3 @@ def generate_filename_v2(data):
 
 
 print(generate_filename_v2(data))
-
-
-data = [1, 2, 3, 4, 5]
-first, *middle, last = data
-print(first)
-print(middle)
-print(last)
-# 1
-# [2, 3, 4]
-# 5

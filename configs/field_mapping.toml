@@ -10,10 +10,8 @@ name = "arch"
 fields = ["建筑编号", "建筑名称"]
 naming_template = "COL_{建筑编号}_{建筑名称}"
 
-[mapping.arch.shape]
-fields = ["建筑形式", "出廊", "楹", "描述1"]
 
-[mapping.arch.bay]
+[mapping.arch.bays]
 fields = ["明间", "次间", "二次间", "三次间", "四次间"]
 
 [mapping.arch.depth]
@@ -23,14 +21,9 @@ fields = ["通进深", "檐步架"]
 fields = ["标注檐柱高", "标注柱径", "标注台明高", "标注上出", "标注下出"]
 
 
-# [building_forms]
-# [building_forms."硬山"]
-# [building_forms."歇山"]
-# hip_roof = "歇山"
-
 [corridor_types]
-"无廊" = "none"
-"前出廊" = "front_corridor" 
+"无廊" = "none_corridor"
+"前出廊" = "front_corridor"
 "前后廊" = "both_side_corridor"
 "周围廊" = "surround_corridor"
 
@@ -55,11 +48,11 @@ fields = ["标注檐柱高", "标注柱径", "标注台明高", "标注上出", 
 "次间" = "side_bay"
 "二次间" = "secondary_side_bay"
 "三次间" = "tertiary_side_bay"
-"四次间" = "quaternary_side_bay"
+"梢间" = "end_bay"
 "通进深" = "total_depth"
 "檐步架" = "eave_step"
-"标注檐柱高" = "annotated_column_height"
-"标注柱径" = "annotated_column_diameter"
+"标注檐柱高" = "annotated_eave_column_height"
+"标注柱径" = "annotated_eave_column_diameter"
 "标注台明高" = "annotated_platform_height"
 "标注上出" = "annotated_upper_overhang"
 "标注下出" = "annotated_lower_overhang"

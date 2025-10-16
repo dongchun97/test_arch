@@ -19,34 +19,47 @@ test_arch/
 │   ├── loader.py              # data数据加载
 │   └── calculator.py          # 尺寸计算
 │
-├── geometry/                  # bmesh几何生成
-│   ├── __init__.py
-│   ├── pillar.py              # 柱子bmesh
-│   ├── beam.py                # 梁bmesh  
-│   ├── bracket.py             # 斗拱bmesh
-│   ├── roof.py                # 屋顶bmesh
-│   └── tenon.py               # 榫卯bmesh
-│
-├── structure/                # 逻辑层 - 对象生成器
-│   ├── __init__.py
-│   ├── placement.py           # 定位坐标规则
-│   ├── collection.py          # 集合与父子关系
-│   ├── assembler.py           # 组装逻辑
-│   └── systems/               # 子系统
-│       ├── pillar_net.py      # 柱网系统
-│       ├── beam_frame.py      # 梁架系统
-│       ├── roof_system.py     # 屋顶系统
-│       └── components/        # 新增：单个构件生成器
-│           ├── pillar.py      # 柱子对象生成
-│           ├── beam.py        # 梁对象生成
-│           ├── purlin.py      # 檩条对象生成
-│           └── rafter.py      # 椽子对象生成
+├── geometry/                     # 底层几何 - 纯bmesh建模
+│   ├── pillar.py
+│   ├── beam.py
+│   ├── roof.py
+│   ├── bracket.py
+│   └── tenon.py
+│   └── wall.py
+│ 
+├── structure/                    # 构件逻辑 - 对象组合与组装
+│   ├── collection.py
+│   ├── placement.py
+│   ├── assembler.py
+│   ├── systems/                  # 系统层（成体系结构）
+│   │   ├── pillar_net.py
+│   │   ├── beam_frame.py
+│   │   ├── roof_system.py
+│   │   ├── wall_system.py        # ✅ 新增山墙系统（Wall）
+│   │   └── __init__.py
+│   ├── components/               # 构件层（基础构件）
+│   │   ├── timber/               # 大木作
+│   │   │   ├── column.py
+│   │   │   ├── beam.py
+│   │   │   ├── purlin.py
+│   │   │   └── __init__.py
+│   │   ├── small_wood/           # 小木作（门窗、隔扇、天花）
+│   │   │   ├── door.py
+│   │   │   ├── window.py
+│   │   │   ├── ceiling.py
+│   │   │   └── __init__.py
+│   │   ├── masonry/              # 瓦石作（山墙、台基、墙体）
+│   │   │   ├── wall_base.py
+│   │   │   ├── wall_body.py
+│   │   │   ├── wall_roofjoint.py
+│   │   │   └── __init__.py
+│   │   └── __init__.py
+│   └── __init__.py
 │
 ├── utils/                      # 工具函数
 │   ├── __init__.py
 │   ├── bmesh_utils.py         # bmesh工具
-│   ├── mesh_pool.py           # 网格对象池
-│   └── naming_service.py      # 命名格式化服务
+│   └──mesh_pool.py           # 网格对象池
 │
 ├── tests/ 
 │   └── test

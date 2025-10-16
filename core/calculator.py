@@ -1,107 +1,199 @@
+import numpy as np
+from dataclasses import dataclass, asdict
 import math
 
-def generate_frame_geometry(num_lintels, num_bays, bay_widths, depth_total, eave_step, D, symmetry=True):
+
+@dataclass
+class Beam:
+    start: tuple
+    end: tuple
+    length: float
+    type: str  # x_beam, y_beam, eave_beam, corner_beam, ridge_beam
+
+
+@dataclass
+class Wall:
+    base_line: tuple  # [(x1, y1), (x2, y2)]
+    height: float
+    type: str  # gable, partition
+
+
+class FrameGeometryCalculator:
     """
-    根据建筑基本参数生成平面柱网与梁枋坐标。
-    支持左右对称、输出梁枋长度与定位数据。
-
-    参数:
-        num_lintels (int): 檩数（进深方向柱列数）
-        num_bays (int): 楹数（面阔方向柱列数）
-        bay_widths (list[float]): 开间宽度数组（从明间起）
-        depth_total (float): 通进深（不含檐步架）
-        eave_step (float): 檐步架尺寸
-        D (float): 檐柱径
-        symmetry (bool): 是否对称展开（默认True）
-
-    返回:
-        dict: 包含x_grid, y_grid, pillar_coords, beam_data
+    清式建筑：平面柱网与主要梁枋、山墙几何计算类
     """
 
-    # 1️⃣ 面阔方向坐标
-    if symmetry:
-        # 假设 bay_widths 中第一个是明间宽度，后续依次是次间宽度
-        half_bays = bay_widths[::-1]  # 反转后方便对称
-        full_bays = half_bays + bay_widths[1:]
-    else:
-        full_bays = bay_widths
+    def __init__(
+        self,
+        num_lintels,
+        num_bays,
+        bay_widths,
+        depth_total,
+        eave_step,
+        D,
+        symmetry=True,
+    ):
+        self.num_lintels = num_lintels
+        self.num_bays = num_bays
+        self.bay_widths = bay_widths
+        self.depth_total = depth_total
+        self.eave_step = eave_step
+        self.D = D
+        self.symmetry = symmetry
 
-    x_grid = [0.0]
-    for w in full_bays:
-        x_grid.append(x_grid[-1] + w)
+        # 初始化空数据
+        self.x_grid = None
+        self.y_grid = None
+        self.pillar_coords = None
+        self.beams = []
+        self.walls = []
 
-    # 中心归零对齐
-    x_mid = (x_grid[-1] - x_grid[0]) / 2
-    x_grid = [x - x_mid for x in x_grid]
+    # --------------------------------------------------------
+    # 主流程入口
+    # --------------------------------------------------------
+    def compute_all(self):
+        self._compute_grids()
+        self._compute_pillars()
+        self._compute_beams()
+        self._compute_gables()
+        self._compute_eave_and_corner_beams()
+        return self._export_result()
 
-    # 2️⃣ 进深方向坐标
-    if num_lintels == 6:
-        depth_segments = [eave_step, 0.5, D * 3, 0.5, eave_step]
-    else:
-        inner_depth = depth_total - 2 * eave_step
-        seg = inner_depth / (num_lintels - 2)
-        depth_segments = [eave_step] + [seg] * (num_lintels - 2) + [eave_step]
+    # --------------------------------------------------------
+    # Step 1: 面阔与进深坐标网格
+    # --------------------------------------------------------
+    def _compute_grids(self):
+        if self.symmetry:
+            # 左右对称展开
+            half = self.bay_widths[::-1]
+            full_bays = half + self.bay_widths[1:]
+        else:
+            full_bays = self.bay_widths
 
-    y_grid = [0.0]
-    for d in depth_segments:
-        y_grid.append(y_grid[-1] + d)
+        x_grid = np.zeros(len(full_bays) + 1)
+        for i, w in enumerate(full_bays):
+            x_grid[i + 1] = x_grid[i] + w
+        x_grid -= x_grid[-1] / 2
 
-    # 同样中心对齐
-    y_mid = (y_grid[-1] - y_grid[0]) / 2
-    y_grid = [y - y_mid for y in y_grid]
+        # 进深方向
+        if self.num_lintels == 6:
+            depth_segments = [self.eave_step, 0.5, self.D * 3, 0.5, self.eave_step]
+        else:
+            inner_depth = self.depth_total - 2 * self.eave_step
+            seg = inner_depth / (self.num_lintels - 2)
+            depth_segments = (
+                [self.eave_step] + [seg] * (self.num_lintels - 2) + [self.eave_step]
+            )
 
-    # 3️⃣ 柱坐标
-    pillar_coords = [(x, y) for x in x_grid for y in y_grid]
+        y_grid = np.zeros(len(depth_segments) + 1)
+        for i, d in enumerate(depth_segments):
+            y_grid[i + 1] = y_grid[i] + d
+        y_grid -= y_grid[-1] / 2
 
-    # 4️⃣ 梁、枋长度与坐标线
-    # 面阔梁：沿x方向（前后檩之间）
-    beam_x = []
-    for yi in y_grid:
-        for i in range(len(x_grid) - 1):
-            beam_x.append({
-                "start": (x_grid[i], yi),
-                "end": (x_grid[i + 1], yi),
-                "length": x_grid[i + 1] - x_grid[i],
-                "dir": "x"
-            })
+        self.x_grid, self.y_grid = x_grid, y_grid
 
-    # 进深梁：沿y方向（左右楹之间）
-    beam_y = []
-    for xi in x_grid:
-        for j in range(len(y_grid) - 1):
-            beam_y.append({
-                "start": (xi, y_grid[j]),
-                "end": (xi, y_grid[j + 1]),
-                "length": y_grid[j + 1] - y_grid[j],
-                "dir": "y"
-            })
+    # --------------------------------------------------------
+    # Step 2: 柱网坐标
+    # --------------------------------------------------------
+    def _compute_pillars(self):
+        X, Y = np.meshgrid(self.x_grid, self.y_grid)
+        self.pillar_coords = np.stack([X.ravel(), Y.ravel()], axis=1)
 
-    return {
-        "x_grid": x_grid,
-        "y_grid": y_grid,
-        "pillar_coords": pillar_coords,
-        "beam_data": {
-            "x_beams": beam_x,
-            "y_beams": beam_y
+    # --------------------------------------------------------
+    # Step 3: 梁枋（包括进深梁与面阔梁）
+    # --------------------------------------------------------
+    def _compute_beams(self):
+        # 面阔梁 (沿x方向)
+        for y in self.y_grid:
+            for i in range(len(self.x_grid) - 1):
+                start = (self.x_grid[i], y)
+                end = (self.x_grid[i + 1], y)
+                self.beams.append(Beam(start, end, end[0] - start[0], "x_beam"))
+
+        # 进深梁 (沿y方向)
+        for x in self.x_grid:
+            for j in range(len(self.y_grid) - 1):
+                start = (x, self.y_grid[j])
+                end = (x, self.y_grid[j + 1])
+                self.beams.append(Beam(start, end, end[1] - start[1], "y_beam"))
+
+    # --------------------------------------------------------
+    # Step 4: 山墙（一般在最前、最后一排檩柱）
+    # --------------------------------------------------------
+    def _compute_gables(self):
+        front_line = [
+            (self.x_grid[0], self.y_grid[0]),
+            (self.x_grid[-1], self.y_grid[0]),
+        ]
+        back_line = [
+            (self.x_grid[0], self.y_grid[-1]),
+            (self.x_grid[-1], self.y_grid[-1]),
+        ]
+        wall_height = self.D * 15  # 仅示例，可用比例代替
+        self.walls.append(Wall(front_line, wall_height, "gable"))
+        self.walls.append(Wall(back_line, wall_height, "gable"))
+
+    # --------------------------------------------------------
+    # Step 5: 老檐枋、老角梁（基于檐口两侧）
+    # --------------------------------------------------------
+    def _compute_eave_and_corner_beams(self):
+        # 前檐老檐枋
+        y_front = self.y_grid[0]
+        y_back = self.y_grid[-1]
+
+        self.beams.append(
+            Beam(
+                (self.x_grid[0], y_front),
+                (self.x_grid[-1], y_front),
+                self.x_grid[-1] - self.x_grid[0],
+                "eave_beam_front",
+            )
+        )
+        self.beams.append(
+            Beam(
+                (self.x_grid[0], y_back),
+                (self.x_grid[-1], y_back),
+                self.x_grid[-1] - self.x_grid[0],
+                "eave_beam_back",
+            )
+        )
+
+        # 四角老角梁
+        corners = [
+            ((self.x_grid[0], y_front), (self.x_grid[1], self.y_grid[1])),
+            ((self.x_grid[-1], y_front), (self.x_grid[-2], self.y_grid[1])),
+            ((self.x_grid[0], y_back), (self.x_grid[1], self.y_grid[-2])),
+            ((self.x_grid[-1], y_back), (self.x_grid[-2], self.y_grid[-2])),
+        ]
+        for start, end in corners:
+            length = math.dist(start, end)
+            self.beams.append(Beam(start, end, length, "corner_beam"))
+
+    # --------------------------------------------------------
+    # Step 6: 导出
+    # --------------------------------------------------------
+    def _export_result(self):
+        return {
+            "x_grid": self.x_grid.tolist(),
+            "y_grid": self.y_grid.tolist(),
+            "pillars": self.pillar_coords.tolist(),
+            "beams": [asdict(b) for b in self.beams],
+            "walls": [asdict(w) for w in self.walls],
         }
-    }
 
 
+calc = FrameGeometryCalculator(
+    num_lintels=6,
+    num_bays=5,
+    bay_widths=[1.2, 1.0, 1.0],
+    depth_total=2.3,
+    eave_step=0.4,
+    D=0.1,
+)
 
+result = calc.compute_all()
 
-if __name__=="__main__":
-    result = generate_frame_geometry(
-        num_lintels=6,
-        num_bays=5,
-        bay_widths=[1.2, 1.0, 1.0],
-        depth_total=2.3,
-        eave_step=0.4,
-        D=0.1,
-        symmetry=True
-    )
-
-    print("X坐标:", result["x_grid"])
-    print("Y坐标:", result["y_grid"])
-    print("柱数:", len(result["pillar_coords"]))
-    print("面阔梁数:", len(result["beam_data"]["x_beams"]))
-    print("进深梁数:", len(result["beam_data"]["y_beams"]))
+print("柱网数量:", len(result["pillars"]))
+print("梁数:", len(result["beams"]))
+print("山墙数:", len(result["walls"]))
+print("首个老角梁:", [b for b in result["beams"] if b["type"] == "corner_beam"][0])

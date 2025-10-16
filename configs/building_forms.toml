@@ -12,7 +12,7 @@ description = "古建筑形式分类配置"
 [building_categories]
 "庑殿" = "hip_roof_palace"
 "歇山" = "hip_roof"
-"硬山" = "hard_hill" 
+"硬山" = "hard_hill"
 "悬山" = "hanging_hill"
 "攒尖" = "pyramidal_roof"
 "杂式建筑" = "miscellaneous"
@@ -22,7 +22,7 @@ description = "古建筑形式分类配置"
 # 3. 建筑形式数据部分
 # ======================
 [building_forms."八檩卷棚"]
-name = "八檩卷棚"
+name = "ARCH_{建筑编号}_{建筑名称}_八檩卷棚"
 category = "悬山"
 code = "eight_purlin_roll_shed"
 purlin_count = 8
@@ -32,7 +32,7 @@ is_roll = true
 eave_type = "single"
 
 [building_forms."九檩单檐"]
-name = "九檩单檐"
+name = "ARCH_{建筑编号}_{建筑名称}_九檩单檐"
 category = "庑殿"
 code = "nine_purlin_single_eave"
 purlin_count = 9
@@ -45,18 +45,18 @@ eave_type = "single"
 # ======================
 # 4.显示文本映射
 # ======================
-[display_mapping.is_dashi]
-true = "大式"
-false = "小式"
-
 [display_mapping.is_doukou]
-true = "斗口制"
-false = "檐柱径制"
+"斗口制" = true
+"檐柱径制" = false
+
+[display_mapping.is_dashi]
+"大式" = true
+"小式" = false
 
 [display_mapping.is_roll]
-true = "卷棚"
-false = "大屋脊"
+"卷棚" = true
+"大屋脊" = false
 
 [display_mapping.eave_type]
-"single" = "单檐"
-"double" = "重檐"
+"单檐" = "single"
+"重檐" = "double"
