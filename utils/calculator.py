@@ -65,11 +65,11 @@ def generate_frame_geometry(
                 {
                     "start": (x_grid[i], yi),
                     "end": (x_grid[i + 1], yi),
-                    "length": x_grid[i + 1] - x_grid[i],
+                    "length": full_bays[i],
                     "dir": "x",
                 }
             )
-
+    print(beam_x)
     # 进深梁：沿y方向（左右楹之间）
     beam_y = []
     for xi in x_grid:
@@ -101,8 +101,10 @@ result = generate_frame_geometry(
     symmetry=True,
 )
 
-print("X坐标:", result["x_grid"])
-print("Y坐标:", result["y_grid"])
-print("柱数:", len(result["pillar_coords"]))
-print("面阔梁数:", len(result["beam_data"]["x_beams"]))
-print("进深梁数:", len(result["beam_data"]["y_beams"]))
+# print("X坐标:", result["x_grid"])
+# print("Y坐标:", result["y_grid"])
+
+# print("柱数:", result["pillar_coords"])
+# print("柱数:", len(result["pillar_coords"]))
+# print("面阔梁数:", len(result["beam_data"]["x_beams"]))
+# print("进深梁数:", len(result["beam_data"]["y_beams"]))
