@@ -1,12 +1,3 @@
-# 统一命名标准 - 确保所有配置文件使用相同的英文名称
-
-# 建筑形式
-[building_forms]
-"硬山" = "hard_hill"
-"悬山" = "hanging_hill"
-"歇山" = "hip_roof"
-"庑殿" = "hip_roof_palace"
-"攒尖" = "pyramidal_roof"
 
 # 开间类型
 [bays]

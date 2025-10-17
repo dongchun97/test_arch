@@ -1,0 +1,13 @@
+[paths]
+data_dir = "data/"
+output_dir = "output/"
+log_dir = "logs/"
+
+[architecture]
+default_style = "qing"
+default_scale = 1.0
+pillar_ratio = 0.05
+
+[geometry]
+enable_bmesh = true
+precision = 0.001

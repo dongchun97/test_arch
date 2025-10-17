@@ -21,6 +21,13 @@ class Wall:
 class FrameGeometryCalculator:
     """
     清式建筑：平面柱网与主要梁枋、山墙几何计算类
+    num_lintels:檩数
+    num_bays:楹数
+    bay_widths:面阔列表[1.2, 1.0, 1.0]
+    depth_total:通进深
+    eave_step:檐步架
+    D,
+    symmetry=True,
     """
 
     def __init__(
@@ -64,6 +71,9 @@ class FrameGeometryCalculator:
     # Step 1: 面阔与进深坐标网格
     # --------------------------------------------------------
     def _compute_grids(self):
+        """
+        计算面阔与进深坐标网格，返回x_grid, y_grid
+        """
         if self.symmetry:
             # 左右对称展开
             half = self.bay_widths[::-1]
@@ -97,6 +107,9 @@ class FrameGeometryCalculator:
     # Step 2: 柱网坐标
     # --------------------------------------------------------
     def _compute_pillars(self):
+        """
+        计算平面柱网坐标，返回pillar_coords
+        """
         X, Y = np.meshgrid(self.x_grid, self.y_grid)
         self.pillar_coords = np.stack([X.ravel(), Y.ravel()], axis=1)
 
@@ -104,24 +117,31 @@ class FrameGeometryCalculator:
     # Step 3: 梁枋（包括进深梁与面阔梁）
     # --------------------------------------------------------
     def _compute_beams(self):
+        """
+        计算梁枋
+        """
+
         # 面阔梁 (沿x方向)
         for y in self.y_grid:
             for i in range(len(self.x_grid) - 1):
-                start = np.round((self.x_grid[i], y),2)
-                end = np.round((self.x_grid[i + 1], y),2)
+                start = np.round((self.x_grid[i], y), 2)
+                end = np.round((self.x_grid[i + 1], y), 2)
                 self.beams.append(Beam(start, end, end[0] - start[0], "x_beam"))
 
         # 进深梁 (沿y方向)
         for x in self.x_grid:
             for j in range(len(self.y_grid) - 1):
-                start = np.round((x, self.y_grid[j]),2)
-                end = np.round((x, self.y_grid[j + 1]),2)
+                start = np.round((x, self.y_grid[j]), 2)
+                end = np.round((x, self.y_grid[j + 1]), 2)
                 self.beams.append(Beam(start, end, end[1] - start[1], "y_beam"))
 
     # --------------------------------------------------------
     # Step 4: 山墙（一般在最前、最后一排檩柱）
     # --------------------------------------------------------
     def _compute_gables(self):
+        """
+        计算山墙
+        """
         front_line = [
             (self.x_grid[0], self.y_grid[0]),
             (self.x_grid[-1], self.y_grid[0]),
@@ -138,6 +158,9 @@ class FrameGeometryCalculator:
     # Step 5: 老檐枋、老角梁（基于檐口两侧）
     # --------------------------------------------------------
     def _compute_eave_and_corner_beams(self):
+        """
+        计算老檐枋和老角梁
+        """
         # 前檐老檐枋
         y_front = self.y_grid[0]
         y_back = self.y_grid[-1]
@@ -167,8 +190,10 @@ class FrameGeometryCalculator:
             ((self.x_grid[-1], y_back), (self.x_grid[-2], self.y_grid[-2])),
         ]
         for start, end in corners:
-            length = round(math.dist(start, end),2)
-            self.beams.append(Beam(np.round((start),2), np.round((end),2), length, "corner_beam"))
+            length = round(math.dist(start, end), 2)
+            self.beams.append(
+                Beam(np.round((start), 2), np.round((end), 2), length, "corner_beam")
+            )
 
     # --------------------------------------------------------
     # Step 6: 导出
@@ -200,5 +225,5 @@ if __name__ == "__main__":
     # print("山墙数:", len(result["walls"]))
     # print("首个老角梁:", [b for b in result["beams"] if b["type"] == "corner_beam"][0])
 
-    result=(calc.x_grid)
+    result = calc.x_grid
     print(result)

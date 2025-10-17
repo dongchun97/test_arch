@@ -1,0 +1,69 @@
+[project]
+name = "构件权衡表"
+version = "1.0"
+
+[settings]
+default_language = "chinese"
+
+
+[pillar]
+
+[pillar.eave]
+name = "eave-pillar" #"檐柱"
+ratio = 0.8
+
+[pillar.gable]
+name = "gable-pillar" #"山柱"
+ratio = 0.8
+
+[pillar.center]
+name = "center-pillar" #"中柱"
+ratio = 0.8
+
+[pillar.gold]
+name = "gold-pillar" #"金柱"
+ratio = 0.8
+
+[pillar.top]
+name = "top-pillar" #"顶柱"
+ratio = 0.8
+
+[pillar.ridge]
+name = "ridge-pillar" #"脊柱"
+ratio = 0.8
+
+[pillar.gold_melon]
+name = "gold-melon-pillar" #"金瓜柱"
+ratio = 0.8
+
+[pillar.ridge_melon]
+name = "ridge-melon-pillar" #"脊瓜柱"
+ratio = 0.8
+
+[pillar.top_melon]
+name = "top-melon-pillar" #"顶瓜柱"
+ratio = 0.8
+
+[beam]
+[beam.five]
+name = "five_purlin_beam" #五架梁
+ratio = 0.8
+
+[beam.three]
+name = "three_purlin_beam" #三架梁
+
+[beam.embracing]
+name = "embracing_head_beam" #抱头梁
+
+[beam.crescent]
+name = "crescent_beam" #月梁
+
+[architrave]
+[architrave.eave]
+name = "eave_architrave" #檐枋
+
+[architrave.ridge]
+name = "ridge_architrave" #脊枋
+
+[architrave.gold]
+name = "gold_architrave" #金枋

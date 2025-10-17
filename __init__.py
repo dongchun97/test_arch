@@ -1,1 +1,1 @@
-from configs import config_manager
+from .configs import ConfigManager

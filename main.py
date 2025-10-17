@@ -1,7 +1,10 @@
-def main():
-    import generator
-    generator.generator(file_path)
+import generator
 
-if __name__ == "__main__":
-    file_path = "data/data-2.csv"
-    main()
+
+def main():
+
+    data = "data/data-2.csv"
+    generator.generator(data)
+
+
+main()

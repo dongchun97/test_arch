@@ -30,6 +30,7 @@ is_dashi = true
 is_doukou = false
 is_roll = true
 eave_type = "single"
+roof_raise = [0.5, 0.65, 0.8]
 
 [building_forms."九檩单檐"]
 name = "ARCH_{建筑编号}_{建筑名称}_九檩单檐"
@@ -40,23 +41,34 @@ is_dashi = true
 is_doukou = true
 is_roll = false
 eave_type = "single"
+roof_raise = [0.5, 0.65, 0.8]
 # ... 其他建筑形式
 
 # ======================
 # 4.显示文本映射
 # ======================
-[display_mapping.is_doukou]
-"斗口制" = true
-"檐柱径制" = false
+[rules]
+"檐柱径制" = true #"斗口制" 为false
 
-[display_mapping.is_dashi]
-"大式" = true
-"小式" = false
+[rules.is_dashi]
+is_dashi = true #大式柱径0.8，非大式柱径0.9
+diameter = 0.8
 
-[display_mapping.is_roll]
-"卷棚" = true
-"大屋脊" = false
+[rules.is_xiaoshi]
+is_xiaoshi = true #小式柱径0.7
+diameter = 0.7
 
-[display_mapping.eave_type]
+[rules.is_roll]
+"卷棚" = true #"大屋脊" 为false
+
+[rules.eave_type]
 "单檐" = "single"
 "重檐" = "double"
+
+[rules.roof_raise]
+4 = [0.5, 0.5]             # 举高比例范围
+5 = [0.5, 0.5]
+6 = [0.5, 0.65, 0.65, 0.5]
+
+[rules.eave_overhang]
+eave_overhang = 0.24 # 出檐范围

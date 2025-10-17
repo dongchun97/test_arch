@@ -1,8 +1,3 @@
-# utils/mesh_pool.py
-from .naming_service import NamingService
-
-
-# utils/mesh_pool.py
 class MeshPool:
     """网格对象池 - 复用网格数据"""
 
