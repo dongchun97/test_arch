@@ -1,18 +1,21 @@
 # generator/generator.py
 from core import DataLoader
+from core import FrameGeometryCalculator
 
 # from structure import Assembler
 
 
 def process_data_file(file_path):
     """主流程协调器"""
-    # 1. 加载数据
-    loader = DataLoader(file_path)
-    return loader
 
-    # 2. 标准化命名
-    # naming_service = NamingService('configs/naming_standard.toml')
-    # standardized_data = naming_service.standardize_columns(raw_data)
+    loader = DataLoader(file_path)      # 1. 加载数据
+    
+    data=loader.get_building_data(1)            # 2. 加载数据行
+
+    # 2. 计算数据
+    dimension=data['dimension_info']
+    result=FrameGeometryCalculator(**dimension)
+    print(result.beams)
 
     # # 3. 结构化数据
     # structurer = Assembler()
@@ -28,11 +31,10 @@ def generator(file_path):
 
 
 if __name__ == "__main__":
-    loader=process_data_file("data/data-2.csv")
-    data=loader.get_building_data(1)
+    file_path = "data/data-2.csv"
+    process_data_file(file_path)
 
-    purlin,dimension,*_=data['dimension_info'].values()
-    print(dimension)
+
     # generate_frame_geometry(dimensions)
 
 

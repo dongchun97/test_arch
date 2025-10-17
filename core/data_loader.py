@@ -16,8 +16,9 @@ class DataLoader:
     def __init__(self, path: str):
         self.path = path
         self.headers = []
-        self.data = self._load_csv()
+        self.data = None
         self.building_data = None
+        self._load_csv()
 
 
     def _load_csv(self) -> np.ndarray:
@@ -85,18 +86,19 @@ class DataLoader:
         }
 
 
-        purlin_num=None
+        num_lintels=None
         construction=structure_info.get("construction")
         if "四檩" in construction:
-           purlin_num=4
+           num_lintels=4
         elif "五檩" in construction:
-            purlin_num=5
+            num_lintels=5
         elif "六檩" in construction:
-            purlin_num=6
+            num_lintels=6
         elif "七檩" in construction:
-            purlin_num=7
+            num_lintels=7
         elif "八檩" in construction:
-            purlin_num=8
+            num_lintels=8
+
 
         # 5. 尺寸信息
         # 5.1 面阔数据
@@ -109,15 +111,17 @@ class DataLoader:
             ]
         )
 
-        span_data = {
-            "all_bays": all_bays[~np.isnan(all_bays)],
-        }
+        bay_widths =  all_bays[~np.isnan(all_bays)]
+
+        bays = len(bay_widths)*2-1
+
 
         # 5.2 进深数据
-        depth_data = {
-            "total": np.array(self.get_str_value(row, "通进深", True)),
-            "eave_step": np.array(self.get_str_value(row, "檐步架", True)),
-        }
+        depth_total = np.array(self.get_str_value(row, "通进深", True))
+        eave_step= np.array(self.get_str_value(row, "檐步架", True))
+
+        #5.3 檐柱径
+        D=all_bays[0]*0.8
 
         # 组合所有数据
         self.building_data = {
@@ -125,9 +129,13 @@ class DataLoader:
             "structure_info": structure_info,
             "description_info": description_info,
             "dimension_info": {
-                "purlin": purlin_num,
-                "span": span_data,
-                "depth": depth_data,}
+                "num_lintels": num_lintels,
+                "num_bays": bays,
+                "bay_widths": bay_widths.tolist(),
+                "depth_total": float(depth_total),
+                "eave_step": float(eave_step),
+                "D":float(D)
+                }
         }
 
         return self.building_data
@@ -139,7 +147,7 @@ if __name__ == "__main__":
     loader = DataLoader("data/data-2.csv")
     # loader.load_csv()
     # array=loader.data
-    print(loader.get_building_data(1))
+    print(loader.get_building_data(1)['dimension_info'])
 
 
     # 获取第一个建筑的数据

@@ -47,6 +47,7 @@ class FrameGeometryCalculator:
         self.pillar_coords = None
         self.beams = []
         self.walls = []
+        self.compute_all()  # 进行计算,可初始化或非初始化
 
     # --------------------------------------------------------
     # 主流程入口
@@ -106,15 +107,15 @@ class FrameGeometryCalculator:
         # 面阔梁 (沿x方向)
         for y in self.y_grid:
             for i in range(len(self.x_grid) - 1):
-                start = (self.x_grid[i], y)
-                end = (self.x_grid[i + 1], y)
+                start = np.round((self.x_grid[i], y),2)
+                end = np.round((self.x_grid[i + 1], y),2)
                 self.beams.append(Beam(start, end, end[0] - start[0], "x_beam"))
 
         # 进深梁 (沿y方向)
         for x in self.x_grid:
             for j in range(len(self.y_grid) - 1):
-                start = (x, self.y_grid[j])
-                end = (x, self.y_grid[j + 1])
+                start = np.round((x, self.y_grid[j]),2)
+                end = np.round((x, self.y_grid[j + 1]),2)
                 self.beams.append(Beam(start, end, end[1] - start[1], "y_beam"))
 
     # --------------------------------------------------------
@@ -166,8 +167,8 @@ class FrameGeometryCalculator:
             ((self.x_grid[-1], y_back), (self.x_grid[-2], self.y_grid[-2])),
         ]
         for start, end in corners:
-            length = math.dist(start, end)
-            self.beams.append(Beam(start, end, length, "corner_beam"))
+            length = round(math.dist(start, end),2)
+            self.beams.append(Beam(np.round((start),2), np.round((end),2), length, "corner_beam"))
 
     # --------------------------------------------------------
     # Step 6: 导出
@@ -182,18 +183,22 @@ class FrameGeometryCalculator:
         }
 
 
-calc = FrameGeometryCalculator(
-    num_lintels=6,
-    num_bays=5,
-    bay_widths=[1.2, 1.0, 1.0],
-    depth_total=2.3,
-    eave_step=0.4,
-    D=0.1,
-)
+if __name__ == "__main__":
+    calc = FrameGeometryCalculator(
+        num_lintels=6,
+        num_bays=5,
+        bay_widths=[1.2, 1.0, 1.0],
+        depth_total=2.3,
+        eave_step=0.4,
+        D=0.1,
+    )
 
-result = calc.compute_all()
+    # result = calc.compute_all()
 
-print("柱网数量:", len(result["pillars"]))
-print("梁数:", len(result["beams"]))
-print("山墙数:", len(result["walls"]))
-print("首个老角梁:", [b for b in result["beams"] if b["type"] == "corner_beam"][0])
+    # print("柱网数量:", len(result["pillars"]))
+    # print("梁数:", len(result["beams"]))
+    # print("山墙数:", len(result["walls"]))
+    # print("首个老角梁:", [b for b in result["beams"] if b["type"] == "corner_beam"][0])
+
+    result=(calc.x_grid)
+    print(result)

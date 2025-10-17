@@ -1,7 +1,6 @@
-name="四檩悬山卷棚"
+a=[1,2,3,4,5]
+b=[2,3,4]
+c=[[1,2,3,4],[5,6,7,8]]
 
-lin=None
-if "四檩" in name:
-    lin=4
-
-print(lin)
+for i,j in c:
+    print(i,j)
