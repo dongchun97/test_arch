@@ -1,1 +1,2 @@
-import .configs
+def sum():
+    return 1
