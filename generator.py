@@ -2,45 +2,63 @@
 from core import DataLoader
 from core import FrameGeometryCalculator
 
-from geometry import create_pillars
-
 # from structure import Assembler
 
-
-def process_data_file(file_path):
-    """主流程协调器"""
-
-    # 1. 加载数据
-    loader = DataLoader(file_path)
-    data = loader.get_building_data(1)  # 加载数据行
-    dimension = data["dimension_info"]
-
-    # 2. 计算数据
-
-    result = FrameGeometryCalculator(**dimension)
-    create_pillars(result)
-
-    # # 3. 结构化数据
-    # structurer = Assembler()
-    # structured_objects = structurer.create_objects(standardized_data)
-
-    # 4. 返回或保存结果
-    # return structured_objects
-    return result
+# from geometry import create_pillars
 
 
-# 提供简化接口
-def generator(file_path):
-    return process_data_file(file_path)
+class Generator:
+    def __init__(self, data_path):
+        self.data_path = data_path
+        self.building_data = None
+        self.calc_results = []
+
+    def load_data(self, row=0):
+        loader = DataLoader(self.data_path)
+        loader.load_csv()
+        self.building_data = loader.get_building_data(row)
+
+    def compute(self):
+        building_dimension_info = self.building_data["dimension_info"]
+        calc = FrameGeometryCalculator(**building_dimension_info)
+        self.calc_results.append(calc.compute_all())
+
+    def assembler(self):
+        structurer = Assembler()
+        return structurer
+
+    def run(self, row=0):
+        self.load_data(row)
+        self.compute()
+        return self.calc_results
 
 
 if __name__ == "__main__":
-    file_path = "data/data-2.csv"
-    building_dimension = generator(file_path)
-    print(building_dimension.pillar_coords)
+    gen = Generator("./data/data-2.csv")
+    result = gen.run()
+    print(result[0]["pillars"])
 
-    # generate_frame_geometry(dimensions)
+    # import json
+    # import numpy as np
 
-    # # 获取第一个建筑的数据
-    # building = loader.get_building_data(1)
-    # print(building)
+    # def convert_numpy_types(obj):
+    #     """递归转换numpy类型为Python原生类型"""
+    #     if isinstance(obj, dict):
+    #         return {key: convert_numpy_types(value) for key, value in obj.items()}
+    #     elif isinstance(obj, list):
+    #         return [convert_numpy_types(item) for item in obj]
+    #     elif isinstance(obj, np.integer):
+    #         return int(obj)
+    #     elif isinstance(obj, np.floating):
+    #         return float(obj)
+    #     elif isinstance(obj, np.ndarray):
+    #         return obj.tolist()
+    #     elif isinstance(obj, np.bool_):
+    #         return bool(obj)
+    #     else:
+    #         return obj
+
+    # # 先转换再保存
+    # converted_result = convert_numpy_types(result)
+    # with open("./test/result.json", "w") as f:
+    #     json.dump(converted_result, f, indent=4)

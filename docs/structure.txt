@@ -3,10 +3,11 @@ test_arch/
 ├── configs/                   # 配置参数
 │   ├── __init__.py
 │   ├── config_manager.py      
-│   ├── field_mapping.toml       # csv配置映射
+│   ├── base_config.toml
 │   ├── building_forms.toml      # 建筑形式配置（包含所有屋顶类型）
-│   ├── naming_standard.toml     # 命名标准
-│   ├── geometry_rules.toml      # 构件尺寸数据（bmesh）
+│   ├── dev.toml
+│   ├── field_mapping.toml       # csv配置映射
+│   ├── geometry_ratio.toml      # 构件尺寸数据（bmesh）
 │   ├── structural_rules.toml    # 结构规则（清代构造法则）
 │   └── component_rules.toml     # 构件规则（柱梁檩比例计算）
 │
@@ -39,7 +40,7 @@ test_arch/
 │   │   └── __init__.py
 │   ├── components/               # 构件层（基础构件）
 │   │   ├── timber/               # 大木作
-│   │   │   ├── column.py
+│   │   │   ├── pillar.py
 │   │   │   ├── beam.py
 │   │   │   ├── purlin.py
 │   │   │   └── __init__.py

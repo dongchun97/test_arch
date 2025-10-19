@@ -1,4 +1,6 @@
-import path_
+import runpy
 
-a = path_.sum()
-print(a)
+runpy.run_path("main.py")
+
+import os
+os.path.join()

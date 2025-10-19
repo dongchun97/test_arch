@@ -7,6 +7,8 @@ default_language = "chinese"
 
 
 [pillar]
+dashi_diameter = 0.8
+xiaoshi_diameter = 0.7
 
 [pillar.eave]
 name = "eave-pillar" #"檐柱"

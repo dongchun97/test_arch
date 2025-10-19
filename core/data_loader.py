@@ -18,9 +18,8 @@ class DataLoader:
         self.headers = []
         self.data = None
         self.building_data = None
-        self._load_csv()
 
-    def _load_csv(self) -> np.ndarray:
+    def load_csv(self) -> np.ndarray:
         """加载CSV数据"""
 
         raw_data = np.genfromtxt(self.path, delimiter=",", dtype=str, encoding="utf-8")
