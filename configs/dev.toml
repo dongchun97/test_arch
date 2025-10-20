@@ -1,5 +1,0 @@
-[paths]
-output_dir = "output/dev/"
-
-[debug]
-log_level = "DEBUG"

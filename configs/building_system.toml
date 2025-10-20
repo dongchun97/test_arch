@@ -1,0 +1,36 @@
+# 房屋建筑
+[house_building]
+[house_building.four_beam]
+pillars = ["eave_column", "top_melon_column", "top_melon_column", "eave_column"]
+beams = ["four_purlin_beam"]
+lift_ratios = [0.5, 1.0]
+
+[house_building.five_beam]
+pillars = ["eave_column", "gold_melon_column", "ridge_melon_column", "gold_melon_column", "eave_column"]
+beams = ["five_purlin_beam", "three_purlin_beam"]
+lift_ratios = [0.5, 0.7, 1.0]
+
+# 垂花门
+[chuihua_gate]
+columns_count = 2
+has_hanging_columns = true
+components = ["front_columns", "hanging_columns", "main_beam", "linking_fang"]
+depth_to_width_ratio = 1.2
+
+# 游廊
+[covered_corridor]
+columns_count = 1
+is_linear = true
+section_length = 3.0
+components = ["corridor_columns", "continuous_beam", "eave_purlin", "ridge_purlin"]
+
+# 亭子
+[square_pavilion]
+sides = 4
+has_center_column = true
+components = ["eave_columns", "center_column", "corner_beams", "ridge_purlin"]
+
+[hexagonal_pavilion]
+sides = 6
+has_center_column = true
+components = ["eave_columns", "center_column", "radial_beams", "ridge_purlin"]

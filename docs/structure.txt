@@ -3,13 +3,10 @@ test_arch/
 ├── configs/                   # 配置参数
 │   ├── __init__.py
 │   ├── config_manager.py      
-│   ├── base_config.toml
-│   ├── building_forms.toml      # 建筑形式配置（包含所有屋顶类型）
-│   ├── dev.toml
-│   ├── field_mapping.toml       # csv配置映射
-│   ├── geometry_ratio.toml      # 构件尺寸数据（bmesh）
-│   ├── structural_rules.toml    # 结构规则（清代构造法则）
-│   └── component_rules.toml     # 构件规则（柱梁檩比例计算）
+│   ├── building_classification.toml # 提供分类信息，用于识别建筑类型
+│   ├── building_systems.toml       # 提供构件组装模板，定义创建顺序
+│   ├── component_library.toml  # 提供构件基本比例，支持公式计算
+│   └── app_settings.toml       # 提供系统行为设置
 │
 ├── data/                        # 数据存储（CSV/XLS）
 │   ├── data.csv                 # 园林建筑基本数据，每一行代表一个建筑     

@@ -1,0 +1,92 @@
+# 建筑主要类别
+[building_categories]
+building = { name = "房屋建筑", description = "主要的居住和使用建筑" }
+gate = { name = "门类建筑", description = "各种类型的门建筑" }
+corridor = { name = "廊类建筑", description = "连接和交通功能的廊建筑" }
+pavilion = { name = "亭类建筑", description = "亭、榭等点景建筑" }
+
+# 建筑子类
+[sub_categories]
+# 门类子类
+chuihua_gate = { name = "垂花门", main_category = "gate" }
+palace_gate = { name = "宫门", main_category = "gate" }
+moon_gate = { name = "月洞门", main_category = "gate" }
+
+# 廊类子类
+covered_corridor = { name = "游廊", main_category = "corridor" }
+climbing_corridor = { name = "爬山廊", main_category = "corridor" }
+
+# 亭类子类
+square_pavilion = { name = "方亭", main_category = "pavilion" }
+hexagonal_pavilion = { name = "六角亭", main_category = "pavilion" }
+octagonal_pavilion = { name = "八角亭", main_category = "pavilion" }
+
+# 建筑等级
+[construction_grades]
+large_style = { name = "大式", level = 1 }
+medium_style = { name = "大式无斗拱", level = 2 }
+small_style = { name = "小式", level = 3 }
+
+# 屋顶形式
+[roof_forms]
+hard_hill = "硬山"
+hanging_hill = "悬山"
+hip_roof = "歇山"
+hip_roof_palace = "庑殿"
+pyramidal_roof = "攒尖"
+
+# 屋脊类型
+[ridge_types]
+main_ridge = "大屋脊"
+roll_shed = "卷棚"
+
+# 大式有斗拱
+[large_style_characteristics]
+has_dougong = true          # 有斗拱
+has_flying_rafters = true   # 有飞椽
+modular_system = "doukou"   # 斗口制
+can_use_colors = true       # 可用彩画
+roof_types = ["hip_roof", "hip_roof_palace", "pyramidal_roof"]  # 可用庑殿、歇山、悬山
+
+# 大式无斗拱
+[medium_style_characteristics]
+description = "具有部分大式特征但规格较低的建筑"
+has_dougong = false           # 无斗拱
+has_flying_rafters = true   # 有飞椽
+modular_system = "column_diameter"    # 檐柱径制
+can_use_colors = true        # 可用简单彩画
+roof_types = ["hip_roof", "hanging_hill", "hard_hill"]  # 可用歇山、悬山、硬山
+
+# 小式建筑特征  
+[small_style_characteristics]
+has_dougong = false         # 无斗拱
+has_flying_rafters = false  # 无飞椽
+modular_system = "column_diameter"  # 檐柱径制
+can_use_colors = false      # 不用彩画
+roof_types = ["hard_hill", "hanging_hill", "roll_shed_roof"]  # 可用屋顶形式
+
+
+# 建筑实例描述
+[building_forms]
+# 四檩卷棚 - 小式建筑
+[building_forms.four_beam_roll_shed_small]
+building_form = "roll_shed_roof"
+construction_grade = "small_style"
+beam_count = 4
+description = "四檩卷棚小式建筑"
+
+# 五檩大屋脊大式建筑
+[building_examples.five_beam_main_ridge_medium]
+construction_grade = "medium_style" 
+roof_form = "hanging_hill"    # 悬山
+ridge_type = "main_ridge"     # 大屋脊
+beam_count = 5
+description = "五檩大屋脊大式悬山建筑"
+
+# 七檩歇山大式建筑
+[building_examples.seven_beam_hip_roof_large]
+construction_grade = "large_style"
+roof_form = "hip_roof"        # 歇山
+ridge_type = "main_ridge"     # 大屋脊
+beam_count = 7
+description = "七檩歇山大式建筑"

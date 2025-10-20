@@ -1,13 +1,14 @@
-[paths]
-data_dir = "data/"
-output_dir = "output/"
-log_dir = "logs/"
+[system]
+version = "1.0.0"
+default_units = "meters"
+coordinate_system = "right_handed"
 
-[architecture]
-default_style = "qing"
-default_scale = 1.0
-pillar_ratio = 0.05
+[generation]
+default_precision = "medium"
+auto_detect_beam_count = true
+apply_cejiao = true
+apply_shoufen = true
 
-[geometry]
-enable_bmesh = true
-precision = 0.001
+[debug]
+log_level = "info"
+enable_validation = true
