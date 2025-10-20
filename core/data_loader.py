@@ -3,6 +3,7 @@
 
 import numpy as np
 from typing import Dict, Any
+from configs import ConfigManager
 
 
 class DataLoader:
@@ -11,12 +12,13 @@ class DataLoader:
     1. 读取CSV数据
     2. 提供结构化的建筑数据
     3. 支持建筑数据获取功能
+
     """
 
     def __init__(self, path: str):
         self.path = path
         self.headers = []
-        self.data = None
+        self.csv_data = None
         self.building_data = None
 
     def load_csv(self) -> np.ndarray:
@@ -24,9 +26,9 @@ class DataLoader:
 
         raw_data = np.genfromtxt(self.path, delimiter=",", dtype=str, encoding="utf-8")
         self.headers = raw_data[0, :].tolist()
-        self.data = raw_data[2:, :]
+        self.csv_data = raw_data[2:, :]
 
-        return self.data
+        return self.csv_data
 
     def get_str_value(
         self, row: np.ndarray, field_name: str, as_float: bool = False
@@ -53,13 +55,13 @@ class DataLoader:
         Returns:
             结构化的建筑数据字典
         """
-        if self.data is None:
+        if self.csv_data is None:
             raise ValueError("数据尚未加载。请先调用 load_csv。")
 
-        if row_index < 0 or row_index >= len(self.data):
+        if row_index < 0 or row_index >= len(self.csv_data):
             raise ValueError(f"行索引 {row_index} 超出范围")
 
-        row = self.data[row_index]
+        row = self.csv_data[row_index]
 
         # 1. 基础信息
         basic_info = {
@@ -72,7 +74,11 @@ class DataLoader:
 
         # 2. 构造信息
         structure_info = {
-            "construction": self.get_str_value(row, "建筑形式"),
+            "building_category": self.get_str_value(row, "建筑类别"),
+            "sub_category": self.get_str_value(row, "建筑子类"),
+            "construction_grades": self.get_str_value(row, "建筑等级"),
+            "roof_forms": self.get_str_value(row, "屋顶形式"),
+            "ridge_types": self.get_str_value(row, "屋脊类型"),
             "corridor": self.get_str_value(row, "出廊"),
         }
 
@@ -80,19 +86,6 @@ class DataLoader:
         description_info = {
             "form": self.get_str_value(row, "描述1"),
         }
-
-        num_lintels = None
-        construction = structure_info.get("construction")
-        if "四檩" in construction:
-            num_lintels = 4
-        elif "五檩" in construction:
-            num_lintels = 5
-        elif "六檩" in construction:
-            num_lintels = 6
-        elif "七檩" in construction:
-            num_lintels = 7
-        elif "八檩" in construction:
-            num_lintels = 8
 
         # 5. 尺寸信息
         # 5.1 面阔数据
@@ -106,15 +99,23 @@ class DataLoader:
         )
 
         bay_widths = all_bays[~np.isnan(all_bays)]
-
         bays = len(bay_widths) * 2 - 1
 
         # 5.2 进深数据
         depth_total = np.array(self.get_str_value(row, "通进深", True))
         eave_step = np.array(self.get_str_value(row, "檐步架", True))
 
+        num_purlins = depth_total // eave_step  # 檩数
+        ridge_step = depth_total % eave_step  # 脊步架
+
         # 5.3 檐柱径
-        D = all_bays[0] * 0.8
+        grades = structure_info["construction_grades"]
+        if "斗口" in grades:
+            D = None
+        elif "小式" in grades:
+            D = all_bays[0] * 0.7
+        else:
+            D = all_bays[0] * 0.8
 
         # 组合所有数据
         self.building_data = {
@@ -122,11 +123,12 @@ class DataLoader:
             "structure_info": structure_info,
             "description_info": description_info,
             "dimension_info": {
-                "num_lintels": num_lintels,
+                "num_purlins": int(num_purlins),
                 "num_bays": bays,
                 "bay_widths": bay_widths.tolist(),
-                "depth_total": float(depth_total),
-                "eave_step": float(eave_step),
+                "depth_total": depth_total,
+                "eave_step": eave_step,
+                "ridge_step": ridge_step,
                 "D": float(D),
             },
         }

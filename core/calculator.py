@@ -21,7 +21,7 @@ class Wall:
 class FrameGeometryCalculator:
     """
     清式建筑：平面柱网与主要梁枋、山墙几何计算类
-    num_lintels:檩数
+    num_purlins:檩数
     num_bays:楹数
     bay_widths:面阔列表[1.2, 1.0, 1.0]
     depth_total:通进深
@@ -32,19 +32,21 @@ class FrameGeometryCalculator:
 
     def __init__(
         self,
-        num_lintels,
+        num_purlins,
         num_bays,
         bay_widths,
         depth_total,
         eave_step,
+        ridge_step,
         D,
         symmetry=True,
     ):
-        self.num_lintels = num_lintels
+        self.num_purlins = num_purlins
         self.num_bays = num_bays
         self.bay_widths = bay_widths
         self.depth_total = depth_total
         self.eave_step = eave_step
+        self.ridge_step = ridge_step
         self.D = D
         self.symmetry = symmetry
 
@@ -87,13 +89,19 @@ class FrameGeometryCalculator:
         x_grid -= x_grid[-1] / 2
 
         # 进深方向
-        if self.num_lintels == 6:
-            depth_segments = [self.eave_step, 0.5, self.D * 3, 0.5, self.eave_step]
+        if self.num_purlins == 6:
+            depth_segments = [
+                self.eave_step,
+                self.eave_step,
+                self.ridge_step,
+                self.eave_step,
+                self.eave_step,
+            ]
         else:
             inner_depth = self.depth_total - 2 * self.eave_step
-            seg = inner_depth / (self.num_lintels - 2)
+            seg = inner_depth / (self.num_purlins - 2)
             depth_segments = (
-                [self.eave_step] + [seg] * (self.num_lintels - 2) + [self.eave_step]
+                [self.eave_step] + [seg] * (self.num_purlins - 2) + [self.eave_step]
             )
 
         y_grid = np.zeros(len(depth_segments) + 1)
@@ -210,7 +218,7 @@ class FrameGeometryCalculator:
 
 if __name__ == "__main__":
     calc = FrameGeometryCalculator(
-        num_lintels=6,
+        num_purlins=6,
         num_bays=5,
         bay_widths=[1.2, 1.0, 1.0],
         depth_total=2.3,

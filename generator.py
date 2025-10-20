@@ -23,9 +23,9 @@ class Generator:
         calc = FrameGeometryCalculator(**building_dimension_info)
         self.calc_results.append(calc.compute_all())
 
-    def assembler(self):
-        structurer = Assembler()
-        return structurer
+    # def assembler(self):
+    #     structurer = Assembler()
+    #     return structurer
 
     def run(self, row=0):
         self.load_data(row)

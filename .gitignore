@@ -2,7 +2,6 @@
 __pycache__/
 *.blend
 /output/
-/data/
 /downloads/
 /test/
 *.sh

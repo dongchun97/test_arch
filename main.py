@@ -19,5 +19,5 @@ def main():
 
 if __name__ == "__main__":
     csv_data = "data/data-2.csv"
-    row = 1
+    row = 2
     main()
