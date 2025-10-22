@@ -7,6 +7,7 @@ geometry/pillar.py
 import bmesh
 import math
 import bpy
+from mathutils import Vector
 
 
 def make_pillar_bmesh(
@@ -71,6 +72,8 @@ def make_pillar_bmesh(
             bmesh.ops.holes_fill(bm, edges=top_boundary)
 
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+
+    bm.free()
     return bm
 
 

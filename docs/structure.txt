@@ -33,7 +33,7 @@ test_arch/
 │   │   ├── pillar_net.py
 │   │   ├── beam_frame.py
 │   │   ├── roof_system.py
-│   │   ├── wall_system.py        # ✅ 新增山墙系统（Wall）
+│   │   ├── wall_system.py        # 新增山墙系统（Wall）
 │   │   └── __init__.py
 │   ├── components/               # 构件层（基础构件）
 │   │   ├── timber/               # 大木作
@@ -41,7 +41,7 @@ test_arch/
 │   │   │   ├── beam.py
 │   │   │   ├── purlin.py
 │   │   │   └── __init__.py
-│   │   ├── small_wood/           # 小木作（门窗、隔扇、天花）
+│   │   ├── small_timber/           # 小木作（门窗、隔扇、天花）
 │   │   │   ├── door.py
 │   │   │   ├── window.py
 │   │   │   ├── ceiling.py

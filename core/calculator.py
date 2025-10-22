@@ -21,53 +21,67 @@ class Wall:
 class FrameGeometryCalculator:
     """
     清式建筑：平面柱网与主要梁枋、山墙几何计算类
-    num_purlins:檩数
     num_bays:楹数
     bay_widths:面阔列表[1.2, 1.0, 1.0]
     depth_total:通进深
     eave_step:檐步架
-    D,
     symmetry=True,
+
+    : D
+    : H
+    : num_purlins
+    : ridge_distance
+    : x_grid
+    : y_grid
+    : pillars_coords
+    : beams
+    : walls
     """
 
     def __init__(
         self,
-        num_purlins,
         num_bays,
         bay_widths,
         depth_total,
         eave_step,
-        ridge_step,
-        D,
         symmetry=True,
     ):
-        self.num_purlins = num_purlins
         self.num_bays = num_bays
         self.bay_widths = bay_widths
         self.depth_total = depth_total
         self.eave_step = eave_step
-        self.ridge_step = ridge_step
-        self.D = D
         self.symmetry = symmetry
 
         # 初始化空数据
+        self.D = None
+        self.H = None
+        self.num_purlins = None
+        self.ridge_distance = None
         self.x_grid = None
         self.y_grid = None
         self.pillar_coords = None
         self.beams = []
         self.walls = []
-        self.compute_all()  # 进行计算,可初始化或非初始化
+        self._compute_all()  # 进行计算,可初始化或非初始化
 
     # --------------------------------------------------------
     # 主流程入口
     # --------------------------------------------------------
-    def compute_all(self):
+    def _compute_all(self):
+        self._compute_eave_and_purlin()
         self._compute_grids()
         self._compute_pillars_coords()
         self._compute_beams()
         self._compute_gables()
         self._compute_eave_and_corner_beams()
         return self._export_result()
+    
+    def _compute_eave_and_purlin(self):
+        self.D=self.bay_widths[0]*0.08
+        self.H=self.bay_widths[0]*0.07
+
+        self.num_purlins = int(self.depth_total // self.eave_step)+2  # 檩数
+        self.ridge_distance = self.depth_total % self.eave_step  # 脊步架
 
     # --------------------------------------------------------
     # Step 1: 面阔与进深坐标网格
@@ -94,7 +108,7 @@ class FrameGeometryCalculator:
                 self.eave_step,
                 self.eave_step,
                 self.eave_step,
-                self.ridge_step,
+                self.ridge_distance,
                 self.eave_step,
                 self.eave_step,
                 self.eave_step,
@@ -103,14 +117,14 @@ class FrameGeometryCalculator:
             depth_segments = [
                 self.eave_step,
                 self.eave_step,
-                self.ridge_step,
+                self.ridge_distance,
                 self.eave_step,
                 self.eave_step,
             ]
         elif self.num_purlins == 4:
             depth_segments = [
                 self.eave_step,
-                self.ridge_step,
+                self.ridge_distance,
                 self.eave_step,
             ]
         # else:
@@ -135,7 +149,8 @@ class FrameGeometryCalculator:
         计算平面柱网坐标，返回pillar_coords
         """
         X, Y = np.meshgrid(self.x_grid, self.y_grid)
-        self.pillar_coords = np.stack([X.ravel(), Y.ravel()], axis=1)
+        Z = np.zeros_like(X)
+        self.pillar_coords = np.stack([X.ravel(), Y.ravel(),Z.ravel()], axis=1)
 
     # --------------------------------------------------------
     # Step 3: 梁枋（包括进深梁与面阔梁）
@@ -223,32 +238,28 @@ class FrameGeometryCalculator:
     # Step 6: 导出
     # --------------------------------------------------------
     def _export_result(self):
-        return {
-            "x_grid": self.x_grid.tolist(),
-            "y_grid": self.y_grid.tolist(),
-            "pillars_coords": self.pillar_coords.tolist(),
-            "beams": [asdict(b) for b in self.beams],
-            "walls": [asdict(w) for w in self.walls],
-        }
+        # return {
+        #     "D": self.D,
+        #     "H": self.H,
+        #     "num_purlins": self.num_purlins,
+        #     "ridge_distance": self.ridge_distance,
+        #     "x_grid": self.x_grid.tolist(),
+        #     "y_grid": self.y_grid.tolist(),
+        #     "pillars_coords": self.pillar_coords.tolist(),
+        #     "beams": [asdict(b) for b in self.beams],
+        #     "walls": [asdict(w) for w in self.walls],
+        # }
+        pass
 
 
 if __name__ == "__main__":
-    calc = FrameGeometryCalculator(
-        num_purlins=4,
-        num_bays=5,
-        bay_widths=[1.2, 1.0, 1.0],
-        depth_total=1.0,
-        eave_step=0.4,
-        ridge_step=0.2,
-        D=0.1,
-    )
 
-    # result = calc.compute_all()
+    data={
+        "num_bays":5,
+        "bay_widths":[1.2, 1.0, 1.0],
+        "depth_total":1.8,
+        "eave_step":0.4,
+        }
+    calc = FrameGeometryCalculator(**data)
 
-    # print("柱网数量:", len(result["pillars"]))
-    # print("梁数:", len(result["beams"]))
-    # print("山墙数:", len(result["walls"]))
-    # print("首个老角梁:", [b for b in result["beams"] if b["type"] == "corner_beam"][0])
-
-    result = calc.compute_all()
-    print(result["pillars_coords"])
+    print(calc.beams)

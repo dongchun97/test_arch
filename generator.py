@@ -8,35 +8,47 @@ from core import FrameGeometryCalculator
 
 
 class Generator:
-    def __init__(self, data_path):
+    def __init__(self, data_path,row=0):
         self.data_path = data_path
-        self.building_data = None
-        self.calc_results = None
+        self.data_row=row
 
-    def load_data(self, row=0):
+        self.building_data = None
+        self.basic_info = None
+        self.structure_info= None
+        self.description_info = None
+        self.dimension_info = None
+        self.calc_results = None
+        self.run()
+
+    def load_data(self):
         loader = DataLoader(self.data_path)
-        loader.load_csv()
-        self.building_data = loader.get_building_data(row)
+        self.building_data = loader.get_building_data(self.data_row)
+
+        self.basic_info = self.building_data["basic_info"]
+        self.structure_info = self.building_data["structure_info"]
+        self.description_info = self.building_data["description_info"]
+        self.dimension_info = self.building_data["dimension_info"]
 
     def compute(self):
-        building_dimension_info = self.building_data["dimension_info"]
-        calc = FrameGeometryCalculator(**building_dimension_info)
-        self.calc_results = calc.compute_all()
+        self.calc_results = FrameGeometryCalculator(**self.dimension_info)
+        
 
     # def assembler(self):
     #     structurer = Assembler()
     #     return structurer
 
-    def run(self, row=0):
-        self.load_data(row)
+    def run(self):
+        self.load_data()
         self.compute()
-        # return self.calc_results
+        return self.calc_results
 
 
 if __name__ == "__main__":
-    gen = Generator("./data/data-2.csv")
-    gen.run()
-    print(type(gen.calc_results["walls"]))
+    file_path = "data/data-2.csv"
+    gen = Generator(file_path)
+
+    print(gen.building_data)
+    print(gen.calc_results.pillar_coords)
 
     # import json
     # import numpy as np

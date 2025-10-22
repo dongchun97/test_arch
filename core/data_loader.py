@@ -20,7 +20,10 @@ class DataLoader:
         self.csv_data = None
         self.building_data = None
 
-    def load_csv(self) -> np.ndarray:
+        self._load_csv()
+
+
+    def _load_csv(self) -> np.ndarray:
         """加载CSV数据"""
 
         raw_data = np.genfromtxt(self.path, delimiter=",", dtype=str, encoding="utf-8")
@@ -104,17 +107,7 @@ class DataLoader:
         depth_total = np.array(self.get_str_value(row, "通进深", True))
         eave_step = np.array(self.get_str_value(row, "檐步架", True))
 
-        num_purlins = depth_total // eave_step  # 檩数
-        ridge_step = depth_total % eave_step  # 脊步架
 
-        # 5.3 檐柱径
-        grades = structure_info["construction_grades"]
-        if "斗口" in grades:
-            D = None
-        elif "小式" in grades:
-            D = all_bays[0] * 0.7
-        else:
-            D = all_bays[0] * 0.8
 
         # 组合所有数据
         self.building_data = {
@@ -122,13 +115,10 @@ class DataLoader:
             "structure_info": structure_info,
             "description_info": description_info,
             "dimension_info": {
-                "num_purlins": int(num_purlins),
                 "num_bays": bays,
                 "bay_widths": bay_widths.tolist(),
                 "depth_total": depth_total,
                 "eave_step": eave_step,
-                "ridge_step": ridge_step,
-                "D": float(D),
             },
         }
 
@@ -139,8 +129,6 @@ class DataLoader:
 if __name__ == "__main__":
     # 创建加载器
     loader = DataLoader("data/data-2.csv")
-    loader.load_csv()
-    # array=loader.data
     print(loader.get_building_data(1))
 
     # 获取第一个建筑的数据

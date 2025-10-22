@@ -11,9 +11,8 @@ from generator import Generator
 
 
 def main():
-    gen = Generator(csv_data)
-    gen.run(row)
-    print(gen.calc_results.get("pillars_coords"))
+    gen = Generator(csv_data,row)
+    print(gen.calc_results.x_grid)
 
 
 if __name__ == "__main__":
