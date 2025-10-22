@@ -16,55 +16,61 @@ def make_pillar_bmesh(
     cap_ends: bool = True,
     taper_ratio: float = 1.0,
 ) -> bmesh.types.BMesh:
-    """
-    创建柱子的 bmesh 对象。
-
-    参数：
-        D (float): 柱径（底部直径）
-        H (float): 柱高
-        segments (int): 圆柱分段数
-        cap_ends (bool): 是否封顶
-        taper_ratio (float): 顶端直径与底部直径之比（用于表示收分）
-
-    返回：
-        bmesh.types.BMesh: 柱子的 bmesh 对象
-    """
 
     bm = bmesh.new()
 
-    # 顶端与底端半径
     radius_bottom = D / 2
     radius_top = (D * taper_ratio) / 2
 
-    # 创建底部圆
-    circle_bottom = bmesh.ops.create_circle(
-        bm, segments=segments, radius=radius_bottom
-    )["verts"]
+    # 创建底部圆环（带边）
+    bottom_circle = bmesh.ops.create_circle(
+        bm,
+        cap_ends=False,  # 创建圆环，有边界边
+        segments=segments,
+        radius=radius_bottom,
+    )
 
-    # 复制并上移，创建顶部圆
-    ret = bmesh.ops.duplicate(bm, geom=circle_bottom)
-    circle_top = [v for v in ret["geom"] if isinstance(v, bmesh.types.BMVert)]
-    for v in circle_top:
-        v.co.z += H
-        # 应用收分
-        v.co.x *= taper_ratio
-        v.co.y *= taper_ratio
+    # 创建顶部圆环
+    top_circle = bmesh.ops.create_circle(
+        bm, cap_ends=False, segments=segments, radius=radius_top
+    )
 
-    # 连接上下圆
-    bmesh.ops.bridge_loops(bm, edges=[e for e in bm.edges if e.is_boundary])
+    # 移动顶部圆环到正确高度
+    for vert in top_circle["verts"]:
+        vert.co.z = H
 
-    # 封顶与封底
+    # 现在有边界边了，可以桥接
+    bottom_edges = [
+        e for e in bm.edges if e.is_boundary and all(v.co.z < 0.001 for v in e.verts)
+    ]
+    top_edges = [
+        e
+        for e in bm.edges
+        if e.is_boundary and all(v.co.z > H - 0.001 for v in e.verts)
+    ]
+
+    if bottom_edges and top_edges:
+        bmesh.ops.bridge_loops(bm, edges=bottom_edges + top_edges)
+
+    # 封顶
     if cap_ends:
-        bottom_edges = [e for e in bm.edges if all(v.co.z < 0.001 for v in e.verts)]
-        top_edges = [e for e in bm.edges if all(v.co.z > H - 0.001 for v in e.verts)]
-        if bottom_edges:
-            bmesh.ops.holes_fill(bm, edges=bottom_edges)
-        if top_edges:
-            bmesh.ops.holes_fill(bm, edges=top_edges)
+        bottom_boundary = [
+            e
+            for e in bm.edges
+            if e.is_boundary and all(v.co.z < 0.001 for v in e.verts)
+        ]
+        top_boundary = [
+            e
+            for e in bm.edges
+            if e.is_boundary and all(v.co.z > H - 0.001 for v in e.verts)
+        ]
 
-    # 统一法线方向
+        if bottom_boundary:
+            bmesh.ops.holes_fill(bm, edges=bottom_boundary)
+        if top_boundary:
+            bmesh.ops.holes_fill(bm, edges=top_boundary)
+
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-
     return bm
 
 

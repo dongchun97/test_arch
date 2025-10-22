@@ -7,7 +7,12 @@ structure/components/timber/pillar.py
 - 支持批量生成柱网
 """
 
-from geometry.pillar import make_pillar_bmesh
+import sys, pathlib
+
+sys.path.append(str(pathlib.Path.cwd()))
+print(sys.path)
+
+from geometry import make_pillar_bmesh
 import bpy
 
 
@@ -18,11 +23,11 @@ class Pillar:
 
     def __init__(
         self,
-        D: float = 0.3,
-        H: float = 3.0,
-        location: tuple = (0, 0, 0),
+        D: float = 0.07,
+        H: float = 0.8,
+        location: tuple = (3, 0, 0),
         taper_ratio: float = 1.0,
-        segments: int = 16,
+        segments: int = 8,
         name: str = "Pillar",
         material: bpy.types.Material = None,
     ):
@@ -120,3 +125,17 @@ class PillarNet:
 
         print(f"✅ 已生成 {len(self.pillars)} 根柱子。")
         return self.objects
+
+
+if __name__ == "__main__":
+
+    pillar_obj = Pillar(
+        D=0.1,
+        H=1.0,
+        location=(3, 0, 0),
+        taper_ratio=1.0,
+        segments=8,
+        name="Pillar",
+        material=None,
+    )
+    pillar_obj.build()

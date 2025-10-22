@@ -3,7 +3,6 @@
 
 import numpy as np
 from typing import Dict, Any
-from configs import ConfigManager
 
 
 class DataLoader:
@@ -140,7 +139,7 @@ class DataLoader:
 if __name__ == "__main__":
     # 创建加载器
     loader = DataLoader("data/data-2.csv")
-    # loader.load_csv()
+    loader.load_csv()
     # array=loader.data
     print(loader.get_building_data(1))
 

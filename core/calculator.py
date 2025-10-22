@@ -63,7 +63,7 @@ class FrameGeometryCalculator:
     # --------------------------------------------------------
     def compute_all(self):
         self._compute_grids()
-        self._compute_pillars()
+        self._compute_pillars_coords()
         self._compute_beams()
         self._compute_gables()
         self._compute_eave_and_corner_beams()
@@ -89,7 +89,17 @@ class FrameGeometryCalculator:
         x_grid -= x_grid[-1] / 2
 
         # 进深方向
-        if self.num_purlins == 6:
+        if self.num_purlins == 8:
+            depth_segments = [
+                self.eave_step,
+                self.eave_step,
+                self.eave_step,
+                self.ridge_step,
+                self.eave_step,
+                self.eave_step,
+                self.eave_step,
+            ]
+        elif self.num_purlins == 6:
             depth_segments = [
                 self.eave_step,
                 self.eave_step,
@@ -97,24 +107,30 @@ class FrameGeometryCalculator:
                 self.eave_step,
                 self.eave_step,
             ]
-        else:
-            inner_depth = self.depth_total - 2 * self.eave_step
-            seg = inner_depth / (self.num_purlins - 2)
-            depth_segments = (
-                [self.eave_step] + [seg] * (self.num_purlins - 2) + [self.eave_step]
-            )
+        elif self.num_purlins == 4:
+            depth_segments = [
+                self.eave_step,
+                self.ridge_step,
+                self.eave_step,
+            ]
+        # else:
+        #     inner_depth = self.depth_total - 2 * self.eave_step
+        #     seg = inner_depth / (self.num_purlins - 2)
+        #     depth_segments = (
+        #         [self.eave_step] + [seg] * (self.num_purlins - 2) + [self.eave_step]
+        #     )
 
         y_grid = np.zeros(len(depth_segments) + 1)
         for i, d in enumerate(depth_segments):
             y_grid[i + 1] = y_grid[i] + d
-        y_grid -= y_grid[-1] / 2
+        y_grid -= self.depth_total / 2
 
         self.x_grid, self.y_grid = x_grid, y_grid
 
     # --------------------------------------------------------
     # Step 2: 柱网坐标
     # --------------------------------------------------------
-    def _compute_pillars(self):
+    def _compute_pillars_coords(self):
         """
         计算平面柱网坐标，返回pillar_coords
         """
@@ -210,7 +226,7 @@ class FrameGeometryCalculator:
         return {
             "x_grid": self.x_grid.tolist(),
             "y_grid": self.y_grid.tolist(),
-            "pillars": self.pillar_coords.tolist(),
+            "pillars_coords": self.pillar_coords.tolist(),
             "beams": [asdict(b) for b in self.beams],
             "walls": [asdict(w) for w in self.walls],
         }
@@ -218,11 +234,12 @@ class FrameGeometryCalculator:
 
 if __name__ == "__main__":
     calc = FrameGeometryCalculator(
-        num_purlins=6,
+        num_purlins=4,
         num_bays=5,
         bay_widths=[1.2, 1.0, 1.0],
-        depth_total=2.3,
+        depth_total=1.0,
         eave_step=0.4,
+        ridge_step=0.2,
         D=0.1,
     )
 
@@ -233,5 +250,5 @@ if __name__ == "__main__":
     # print("山墙数:", len(result["walls"]))
     # print("首个老角梁:", [b for b in result["beams"] if b["type"] == "corner_beam"][0])
 
-    result = calc.x_grid
-    print(result)
+    result = calc.compute_all()
+    print(result["pillars_coords"])

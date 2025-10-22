@@ -1,1 +1,1 @@
-from .pillar import create_pillars
+from .pillar import make_pillar_bmesh

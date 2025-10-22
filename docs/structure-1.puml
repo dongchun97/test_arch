@@ -1,0 +1,167 @@
+@startuml TestArchitecture
+
+!define RECTANGLE class
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+    FontSize 13
+}
+
+package "test_arch" {
+  
+  package "configs" <<Folder>> {
+    [config_manager.py] as ConfigManager
+    [building_classification.toml] as ClassificationConfig
+    [building_systems.toml] as SystemsConfig  
+    [component_library.toml] as LibraryConfig
+    [app_settings.toml] as SettingsConfig
+  }
+  
+  package "data" <<Folder>> {
+    [data.csv] as CSVData
+    [data2.xls] as XLSData
+  }
+  
+  package "core" <<Folder>> {
+    [loader.py] as DataLoader
+    [calculator.py] as Calculator
+  }
+  
+  package "geometry" <<Folder>> {
+    [pillar.py] as PillarGeometry
+    [beam.py] as BeamGeometry
+    [roof.py] as RoofGeometry
+    [bracket.py] as BracketGeometry
+    [tenon.py] as TenonGeometry
+    [wall.py] as WallGeometry
+  }
+  
+  package "structure" <<Folder>> {
+    
+    package "systems" <<Folder>> {
+      [pillar_net.py] as PillarSystem
+      [beam_frame.py] as BeamSystem
+      [roof_system.py] as RoofSystem
+      [wall_system.py] as WallSystem
+    }
+    
+    package "components" <<Folder>> {
+      
+      package "timber" <<Folder>> {
+        [pillar.py] as PillarComponent
+        [beam.py] as BeamComponent
+        [purlin.py] as PurlinComponent
+      }
+      
+      package "small_wood" <<Folder>> {
+        [door.py] as DoorComponent
+        [window.py] as WindowComponent
+        [ceiling.py] as CeilingComponent
+      }
+      
+      package "masonry" <<Folder>> {
+        [wall_base.py] as WallBase
+        [wall_body.py] as WallBody
+        [wall_roofjoint.py] as WallRoofJoint
+      }
+    }
+    
+    [collection.py] as CollectionManager
+    [placement.py] as PlacementEngine
+    [assembler.py] as BuildingAssembler
+  }
+  
+  package "utils" <<Folder>> {
+    [bmesh_utils.py] as BMeshUtils
+    [mesh_pool.py] as MeshPool
+  }
+  
+  [generator.py] as MainGenerator
+  [main.py] as MainEntry
+}
+
+' 数据流关系
+CSVData --> DataLoader : 读取
+XLSData --> DataLoader : 读取
+
+ConfigManager --> DataLoader : 提供配置
+ConfigManager --> Calculator : 提供配置
+ConfigManager --> MainGenerator : 提供配置
+
+DataLoader --> Calculator : 结构化数据
+Calculator --> MainGenerator : 计算后数据
+
+' 配置依赖关系
+ClassificationConfig --> ConfigManager : 被管理
+SystemsConfig --> ConfigManager : 被管理  
+LibraryConfig --> ConfigManager : 被管理
+SettingsConfig --> ConfigManager : 被管理
+
+' 几何生成关系
+MainGenerator --> PillarGeometry : 调用创建
+MainGenerator --> BeamGeometry : 调用创建
+MainGenerator --> RoofGeometry : 调用创建
+MainGenerator --> BracketGeometry : 调用创建
+MainGenerator --> TenonGeometry : 调用创建
+MainGenerator --> WallGeometry : 调用创建
+
+' 结构组装关系
+MainGenerator --> BuildingAssembler : 委托组装
+BuildingAssembler --> CollectionManager : 管理集合
+BuildingAssembler --> PlacementEngine : 定位构件
+BuildingAssembler --> PillarSystem : 柱网系统
+BuildingAssembler --> BeamSystem : 梁架系统  
+BuildingAssembler --> RoofSystem : 屋顶系统
+BuildingAssembler --> WallSystem : 山墙系统
+
+' 构件创建关系
+PillarSystem --> PillarComponent : 创建柱子
+BeamSystem --> BeamComponent : 创建梁
+RoofSystem --> PurlinComponent : 创建檩条
+WallSystem --> WallBase : 创建墙基
+WallSystem --> WallBody : 创建墙身
+WallSystem --> WallRoofJoint : 创建墙顶
+
+' 装饰构件关系
+BuildingAssembler --> DoorComponent : 创建门
+BuildingAssembler --> WindowComponent : 创建窗
+BuildingAssembler --> CeilingComponent : 创建天花
+
+' 工具依赖关系
+PillarGeometry --> BMeshUtils : 使用工具
+BeamGeometry --> BMeshUtils : 使用工具
+RoofGeometry --> BMeshUtils : 使用工具
+BracketGeometry --> BMeshUtils : 使用工具
+TenonGeometry --> BMeshUtils : 使用工具
+WallGeometry --> BMeshUtils : 使用工具
+
+PillarGeometry --> MeshPool : 复用网格
+BeamGeometry --> MeshPool : 复用网格
+RoofGeometry --> MeshPool : 复用网格
+
+' 程序入口
+MainEntry --> MainGenerator : 启动生成
+
+' 样式定义
+note right of ConfigManager
+  配置管理中心
+  单例模式管理所有配置
+end note
+
+note right of DataLoader
+  CSV/XLS数据加载
+  返回结构化建筑数据
+end note
+
+note right of Calculator
+  尺寸计算引擎
+  应用配置规则计算
+end note
+
+note right of MainGenerator
+  主调度器
+  协调整个生成流程
+end note
+
+@enduml

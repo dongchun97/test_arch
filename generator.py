@@ -11,7 +11,7 @@ class Generator:
     def __init__(self, data_path):
         self.data_path = data_path
         self.building_data = None
-        self.calc_results = []
+        self.calc_results = None
 
     def load_data(self, row=0):
         loader = DataLoader(self.data_path)
@@ -21,7 +21,7 @@ class Generator:
     def compute(self):
         building_dimension_info = self.building_data["dimension_info"]
         calc = FrameGeometryCalculator(**building_dimension_info)
-        self.calc_results.append(calc.compute_all())
+        self.calc_results = calc.compute_all()
 
     # def assembler(self):
     #     structurer = Assembler()
@@ -30,13 +30,13 @@ class Generator:
     def run(self, row=0):
         self.load_data(row)
         self.compute()
-        return self.calc_results
+        # return self.calc_results
 
 
 if __name__ == "__main__":
     gen = Generator("./data/data-2.csv")
-    result = gen.run()
-    print(result[0]["pillars"])
+    gen.run()
+    print(type(gen.calc_results["walls"]))
 
     # import json
     # import numpy as np

@@ -1,0 +1,238 @@
+@startuml test
+title test_arch
+
+' skinparam packageStyle rectangle
+' skinparam backgroundColor #ffffff
+' skinparam shadowing false
+' skinparam classAttributeIconSize 0
+' skinparam ArrowColor #999
+' skinparam classBorderColor #666
+' skinparam classBackgroundColor #fdfdfd
+
+'==================================================================
+' 配置层 Configs
+'==================================================================
+package "configs/" {
+  class ConfigManager {
+    +load_all()
+    +get_building_classification()
+    +get_building_systems()
+    +get_component_library()
+    +get_app_settings()
+  }
+
+  class building_classification_toml {
+    .. 内容 ..
+    - 建筑类型分类（大式、小式）
+    - 用于识别 form_type
+  }
+
+  class building_systems_toml {
+    .. 内容 ..
+    - 系统组装顺序模板
+    - 定义构件间关系
+  }
+
+  class component_library_toml {
+    .. 内容 ..
+    - 构件比例
+    - 模数、尺寸公式
+  }
+
+  class app_settings_toml {
+    .. 内容 ..
+    - 全局系统行为参数
+  }
+}
+
+ConfigManager --> building_classification_toml
+ConfigManager --> building_systems_toml
+ConfigManager --> component_library_toml
+ConfigManager --> app_settings_toml
+
+'==================================================================
+' 数据层 Data
+'==================================================================
+package "data/" {
+  class data_csv {
+    - 建筑基础数据（CSV）
+  }
+  class data2_xls {
+    - 可选的扩展数据源
+  }
+}
+
+package "core/" {
+  class DataLoader {
+    +load_data(path)
+    +parse_building_info(row)
+  }
+
+  class ComponentCalculator {
+    +compute_pillar_diameter(form_type)
+    +compute_grid(building_data)
+    +compute_roof_params()
+    +compute_wall_height()
+  }
+
+  DataLoader --> data_csv
+  ComponentCalculator --> ConfigManager
+  ComponentCalculator --> DataLoader
+}
+
+'==================================================================
+' 几何层 Geometry
+'==================================================================
+package "geometry/" {
+  class Pillar {
+    +create(location, diameter, height)
+  }
+  class Beam {
+    +create(start, end, section)
+  }
+  class Roof {
+    +create(style, span, rise)
+  }
+  class Bracket {
+    +create(type, size)
+  }
+  class Tenon {
+    +create(type, depth)
+  }
+  class Wall {
+    +create(start, end, height)
+  }
+}
+
+'==================================================================
+' 构件层 Structure
+'==================================================================
+package "structure/" {
+  class Assembler {
+    +assemble(building_data)
+    +apply_system_template(form_type)
+  }
+
+  class CollectionManager {
+    +create_collection(name)
+  }
+
+  class PlacementManager {
+    +set_parent_child(parent, child)
+    +place_object(obj, location)
+  }
+
+  '----------------------------------------------------------
+  package "structure/systems/" {
+    class PillarNet {
+      +build_from_grid(grid)
+      +add_pillar()
+    }
+    class BeamFrame {
+      +build_from_pillars()
+      +add_beam()
+    }
+    class RoofSystem {
+      +build_from_beams()
+      +add_roof()
+    }
+    class WallSystem {
+      +build_from_pillars()
+      +add_wall()
+    }
+  }
+
+  '----------------------------------------------------------
+  package "structure/components/timber/" {
+    class TimberPillar {
+      +generate_mesh(params)
+      +set_material(wood_type)
+    }
+    class TimberBeam {
+      +generate_mesh(params)
+    }
+    class TimberPurlin {
+      +generate_mesh(params)
+    }
+  }
+
+  package "structure/components/small_wood/" {
+    class Door {
+      +create(style)
+    }
+    class Window {
+      +create(style)
+    }
+    class Ceiling {
+      +create(style)
+    }
+  }
+
+  package "structure/components/masonry/" {
+    class WallBase {
+      +create(size)
+    }
+    class WallBody {
+      +create(height)
+    }
+    class WallRoofJoint {
+      +create(curve)
+    }
+  }
+}
+
+Assembler --> PillarNet
+Assembler --> BeamFrame
+Assembler --> RoofSystem
+Assembler --> WallSystem
+PillarNet --> TimberPillar
+BeamFrame --> TimberBeam
+RoofSystem --> TimberPurlin
+WallSystem --> WallBody
+Assembler --> PlacementManager
+Assembler --> CollectionManager
+Assembler --> ComponentCalculator
+
+'==================================================================
+' 工具层 Utils
+'==================================================================
+package "utils/" {
+  class BMeshUtils {
+    +add_primitive(type, params)
+    +apply_modifier(obj, mod_type)
+  }
+
+  class MeshPool {
+    +get_or_create_mesh(name)
+    +release_unused()
+  }
+}
+
+Pillar --> BMeshUtils
+Beam --> BMeshUtils
+Roof --> BMeshUtils
+MeshPool --> BMeshUtils
+
+'==================================================================
+' 顶层生成器
+'==================================================================
+class BuildingGenerator {
+  +generate_all(data_path)
+  +generate_single(form_type)
+}
+
+BuildingGenerator --> ConfigManager
+BuildingGenerator --> DataLoader
+BuildingGenerator --> Assembler
+BuildingGenerator --> MeshPool
+
+'==================================================================
+' 程序入口
+'==================================================================
+class Main {
+  +run()
+}
+
+Main --> BuildingGenerator
+
+@enduml

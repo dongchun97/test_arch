@@ -1,0 +1,140 @@
+@startuml test
+title test_arch
+
+' ==============================
+' 一级结构：配置 / 数据 / 核心逻辑 / 几何建模 / 构件组装 / 工具 / 主程序
+' ==============================
+package "configs" {
+    class ConfigManager {
+        +load_toml(file)
+        +get_building_systems()
+        +get_component_library()
+        +get_app_settings()
+    }
+}
+
+package "data" {
+    class DataLoader {
+        + csv_path: str
+        + headers: list = []
+        + data: Any = None
+
+        + load_csv(path) -> np.ndarray
+        + get_str_value(row: np.ndarray, field_name: str, as_float: bool = false): Any
+        + get_record() -> list
+    }
+}
+
+package "core" {
+    class Calculator {
+        + compute_dimensions(data)
+        + compute_proportions(form_type)
+        + compute_coordinates(grid_data)
+    }
+}
+
+package "geometry" {
+    class PillarGeometry {
+        + create_pillar_mesh(D, H)
+    }
+    class BeamGeometry {
+        + create_beam_mesh(L, W, H)
+    }
+    class RoofGeometry {
+        + create_roof_mesh(form_type, params)
+    }
+    class WallGeometry {
+        + create_wall_mesh(thickness, height)
+    }
+}
+
+package "structure.components.timber" {
+    class Pillar {
+        + build(calculator)
+    }
+    class Beam {
+        + build(calculator)
+    }
+    class Purlin {
+        + build(calculator)
+    }
+}
+
+package "structure.systems" {
+    class PillarNet {
+        + build_grid()
+        + place_pillars(pillar_objects)
+    }
+    class BeamFrame {
+        + assemble_beams(pillar_net)
+    }
+    class RoofSystem {
+        + assemble_roof(beam_frame)
+    }
+    class WallSystem {
+        + assemble_wall(base, body)
+    }
+}
+
+package "structure" {
+    class Assembler {
+        + assemble_building(form_type, calc_results)
+        + build_structure_layers()
+        + connect_components()
+    }
+
+    class Placement {
+        + align_objects()
+        + set_parenting()
+    }
+
+    class Collection {
+        + group_by_system()
+        + manage_collections()
+    }
+}
+
+package "utils" {
+    class MeshPool {
+        + get_mesh(key)
+        + store_mesh(key, mesh)
+    }
+}
+
+package "generator" {
+    class Generator {
+        + generate_building(record)
+        + export_model(output_path)
+    }
+}
+
+package "main" {
+    class Main {
+        + run()
+    }
+}
+
+' ==============================
+' 模块间依赖关系
+' ==============================
+Main --> Generator
+Generator --> DataLoader
+Generator --> ConfigManager
+Generator --> Calculator
+Generator --> Assembler
+Assembler --> PillarNet
+Assembler --> BeamFrame
+Assembler --> RoofSystem
+Assembler --> WallSystem
+Assembler --> Placement
+Assembler --> Collection
+PillarNet --> Pillar
+BeamFrame --> Beam
+RoofSystem --> Purlin
+WallSystem --> WallGeometry
+Pillar --> PillarGeometry
+Beam --> BeamGeometry
+RoofSystem --> RoofGeometry
+Calculator --> ConfigManager
+Geometry ..> Utils : uses mesh pool
+@enduml
