@@ -74,7 +74,12 @@ def make_pillar_bmesh(
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
 
     bm.free()
-    return bm
+
+    mesh = bpy.data.meshes.new(name)
+    bm.to_mesh(mesh)
+    obj = bpy.data.objects.new(name, mesh)
+    return obj  # 未链接的Object
+
 
 
 # 可选测试代码：直接在Blender中运行此脚本

@@ -8,29 +8,20 @@ from core import FrameGeometryCalculator
 
 
 class Generator:
-    def __init__(self, data_path,row=0):
+    def __init__(self, data_path):
         self.data_path = data_path
-        self.data_row=row
-
         self.building_data = None
-        self.basic_info = None
-        self.structure_info= None
-        self.description_info = None
-        self.dimension_info = None
         self.calc_results = None
-        self.run()
 
-    def load_data(self):
+    def load_data(self,row_index=0):
         loader = DataLoader(self.data_path)
-        self.building_data = loader.get_building_data(self.data_row)
-
-        self.basic_info = self.building_data["basic_info"]
-        self.structure_info = self.building_data["structure_info"]
-        self.description_info = self.building_data["description_info"]
-        self.dimension_info = self.building_data["dimension_info"]
+        loader.load_csv()
+        self.building_data=loader.get_building_data(row_index)
 
     def compute(self):
-        self.calc_results = FrameGeometryCalculator(**self.dimension_info)
+        dimension_info=self.building_data['dimension_info']
+        calc=FrameGeometryCalculator(**dimension_info)
+        self.calc_results=calc.compute_all()
         
 
     # def assembler(self):
@@ -46,9 +37,10 @@ class Generator:
 if __name__ == "__main__":
     file_path = "data/data-2.csv"
     gen = Generator(file_path)
+    gen.run()
 
-    print(gen.building_data)
-    print(gen.calc_results.pillar_coords)
+    print(gen.building_data['dimension_info'])
+    # print(gen.calc_results['x_grid'])
 
     # import json
     # import numpy as np

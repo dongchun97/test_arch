@@ -11,53 +11,28 @@ test_arch/
 ├── data/                        # 数据存储（CSV/XLS）
 │   ├── data.csv                 # 园林建筑基本数据，每一行代表一个建筑     
 │   └── data2.xls                # 园林建筑基本数据，每一行代表一个建筑     
-│
-├── core/                       # 核心逻辑
-│   ├── __init__.py
-│   ├── loader.py              # data数据加载
-│   └── calculator.py          # 尺寸计算
-│
-├── geometry/                     # 底层几何 - 纯bmesh建模
-│   ├── pillar.py
-│   ├── beam.py
-│   ├── roof.py
-│   ├── bracket.py
-│   └── tenon.py
-│   └── wall.py
 │ 
-├── structure/                    # 构件逻辑 - 对象组合与组装
+├── core/
+│   ├── data_manager.py        # 合并 loader + calculator
+│   └── __init__.py
+│
+├── structure/
 │   ├── collection.py
-│   ├── placement.py
-│   ├── assembler.py
-│   ├── systems/                  # 系统层（成体系结构）
+│   ├── assembler.py           # 含 placement 功能
+│   ├── systems/
 │   │   ├── pillar_net.py
 │   │   ├── beam_frame.py
-│   │   ├── roof_system.py
-│   │   ├── wall_system.py        # 新增山墙系统（Wall）
-│   │   └── __init__.py
-│   ├── components/               # 构件层（基础构件）
-│   │   ├── timber/               # 大木作
-│   │   │   ├── pillar.py
-│   │   │   ├── beam.py
-│   │   │   ├── purlin.py
-│   │   │   └── __init__.py
-│   │   ├── small_timber/           # 小木作（门窗、隔扇、天花）
-│   │   │   ├── door.py
-│   │   │   ├── window.py
-│   │   │   ├── ceiling.py
-│   │   │   └── __init__.py
-│   │   ├── masonry/              # 瓦石作（山墙、台基、墙体）
-│   │   │   ├── wall_base.py
-│   │   │   ├── wall_body.py
-│   │   │   ├── wall_roofjoint.py
-│   │   │   └── __init__.py
+│   │   └── roof_system.py
+│   ├── components/
+│   │   ├── pillar.py          # 内含 create_pillar_mesh() + build_grid()
+│   │   ├── beam.py
+│   │   ├── roof.py
 │   │   └── __init__.py
 │   └── __init__.py
 │
-├── utils/                      # 工具函数
-│   ├── __init__.py
-│   ├── bmesh_utils.py         # bmesh工具
-│   └──mesh_pool.py           # 网格对象池
+├── utils/
+│   ├── mesh_pool.py
+│   └── __init__.py
 │
 ├── tests/ 
 │   └── test

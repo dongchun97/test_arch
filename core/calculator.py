@@ -62,12 +62,11 @@ class FrameGeometryCalculator:
         self.pillar_coords = None
         self.beams = []
         self.walls = []
-        self._compute_all()  # 进行计算,可初始化或非初始化
 
     # --------------------------------------------------------
     # 主流程入口
     # --------------------------------------------------------
-    def _compute_all(self):
+    def compute_all(self):
         self._compute_eave_and_purlin()
         self._compute_grids()
         self._compute_pillars_coords()
@@ -238,18 +237,17 @@ class FrameGeometryCalculator:
     # Step 6: 导出
     # --------------------------------------------------------
     def _export_result(self):
-        # return {
-        #     "D": self.D,
-        #     "H": self.H,
-        #     "num_purlins": self.num_purlins,
-        #     "ridge_distance": self.ridge_distance,
-        #     "x_grid": self.x_grid.tolist(),
-        #     "y_grid": self.y_grid.tolist(),
-        #     "pillars_coords": self.pillar_coords.tolist(),
-        #     "beams": [asdict(b) for b in self.beams],
-        #     "walls": [asdict(w) for w in self.walls],
-        # }
-        pass
+        return {
+            "D": self.D,
+            "H": self.H,
+            "num_purlins": self.num_purlins,
+            "ridge_distance": self.ridge_distance,
+            "x_grid": self.x_grid.tolist(),
+            "y_grid": self.y_grid.tolist(),
+            "pillars_coords": self.pillar_coords.tolist(),
+            "beams": [asdict(b) for b in self.beams],
+            "walls": [asdict(w) for w in self.walls],
+        }
 
 
 if __name__ == "__main__":
@@ -261,5 +259,6 @@ if __name__ == "__main__":
         "eave_step":0.4,
         }
     calc = FrameGeometryCalculator(**data)
+    calc.compute_all()
 
-    print(calc.beams)
+    print(calc.x_grid)
