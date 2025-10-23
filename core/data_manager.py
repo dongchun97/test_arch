@@ -18,7 +18,7 @@ class Generator:
         self.calculator = None
         self.assembler = None
 
-    def run(self):
+    def run(self): 
         """完整生成流程"""
         # Step 1: 加载数据
         building_data = self.loader.get_building_data(self.row)

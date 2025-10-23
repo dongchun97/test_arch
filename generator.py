@@ -1,68 +1,61 @@
-# generator/generator.py
-from core import DataLoader
-from core import FrameGeometryCalculator
+# generator.py
+# 简化后的自动建模生成器，负责调度各模块逻辑
 
-# from structure import Assembler
-
-# from geometry import create_pillars
+from core.data_manager import DataManager
+from structure.assembler import Assembler
+from structure.collection import Collection
 
 
 class Generator:
-    def __init__(self, data_path):
-        self.data_path = data_path
-        self.building_data = None
-        self.calc_results = None
+    """
+    统一的建筑生成器
+    职责：
+    1. 加载并解析数据
+    2. 调用尺寸计算模块（DataManager）
+    3. 调用装配模块（Assembler）生成建筑
+    4. 管理集合层级（Collection）
+    """
 
-    def load_data(self,row_index=0):
-        loader = DataLoader(self.data_path)
-        loader.load_csv()
-        self.building_data=loader.get_building_data(row_index)
+    def __init__(self, csv_path: str, row_index: int = 0):
+        self.csv_path = csv_path
+        self.row_index = row_index
 
-    def compute(self):
-        dimension_info=self.building_data['dimension_info']
-        calc=FrameGeometryCalculator(**dimension_info)
-        self.calc_results=calc.compute_all()
-        
+        self.data_manager = None
+        self.collection = None
+        self.assembler = None
 
-    # def assembler(self):
-    #     structurer = Assembler()
-    #     return structurer
+        # 数据缓存
+        self.building_data = {}
+        self.calc_results = {}
+
+    def prepare_data(self):
+        """加载与计算建筑数据"""
+        self.data_manager = DataManager(self.csv_path)
+        self.building_data = self.data_manager.get_building_data(self.row_index)
+        self.calc_results = self.data_manager.calculate_dimensions(self.building_data)
+
+    def build_structure(self):
+        """建立建筑系统并组装"""
+        self.collection = Collection(self.building_data["basic_info"])
+        self.assembler = Assembler(
+            calc_data=self.calc_results,
+            collection=self.collection
+        )
+        building_obj = self.assembler.build_building()
+        return building_obj
 
     def run(self):
-        self.load_data()
-        self.compute()
-        return self.calc_results
+        """执行完整流程"""
+        print(" 正在加载与计算数据...")
+        self.prepare_data()
+
+        print(" 正在生成建筑结构...")
+        building = self.build_structure()
+
+        print(" 建筑生成完成！")
+        return building
 
 
 if __name__ == "__main__":
-    file_path = "data/data-2.csv"
-    gen = Generator(file_path)
+    gen = Generator("data/data.csv", row_index=0)
     gen.run()
-
-    print(gen.building_data['dimension_info'])
-    # print(gen.calc_results['x_grid'])
-
-    # import json
-    # import numpy as np
-
-    # def convert_numpy_types(obj):
-    #     """递归转换numpy类型为Python原生类型"""
-    #     if isinstance(obj, dict):
-    #         return {key: convert_numpy_types(value) for key, value in obj.items()}
-    #     elif isinstance(obj, list):
-    #         return [convert_numpy_types(item) for item in obj]
-    #     elif isinstance(obj, np.integer):
-    #         return int(obj)
-    #     elif isinstance(obj, np.floating):
-    #         return float(obj)
-    #     elif isinstance(obj, np.ndarray):
-    #         return obj.tolist()
-    #     elif isinstance(obj, np.bool_):
-    #         return bool(obj)
-    #     else:
-    #         return obj
-
-    # # 先转换再保存
-    # converted_result = convert_numpy_types(result)
-    # with open("./test/result.json", "w") as f:
-    #     json.dump(converted_result, f, indent=4)
