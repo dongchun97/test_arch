@@ -5,27 +5,27 @@ gate = { name = "门类建筑", description = "各种类型的门建筑" }
 corridor = { name = "廊类建筑", description = "连接和交通功能的廊建筑" }
 pavilion = { name = "亭类建筑", description = "亭、榭等点景建筑" }
 
-# 建筑子类
-[sub_categories]
-# 门类子类
-chuihua_gate = { name = "垂花门", main_category = "gate" }
-palace_gate = { name = "宫门", main_category = "gate" }
-moon_gate = { name = "月洞门", main_category = "gate" }
+# # 建筑子类
+# [sub_categories]
+# # 门类子类
+# chuihua_gate = { name = "垂花门", main_category = "gate" }
+# palace_gate = { name = "宫门", main_category = "gate" }
+# moon_gate = { name = "月洞门", main_category = "gate" }
 
-# 廊类子类
-covered_corridor = { name = "游廊", main_category = "corridor" }
-climbing_corridor = { name = "爬山廊", main_category = "corridor" }
+# # 廊类子类
+# covered_corridor = { name = "游廊", main_category = "corridor" }
+# climbing_corridor = { name = "爬山廊", main_category = "corridor" }
 
-# 亭类子类
-square_pavilion = { name = "方亭", main_category = "pavilion" }
-hexagonal_pavilion = { name = "六角亭", main_category = "pavilion" }
-octagonal_pavilion = { name = "八角亭", main_category = "pavilion" }
+# # 亭类子类
+# square_pavilion = { name = "方亭", main_category = "pavilion" }
+# hexagonal_pavilion = { name = "六角亭", main_category = "pavilion" }
+# octagonal_pavilion = { name = "八角亭", main_category = "pavilion" }
 
 # 建筑等级
 [construction_grades]
-large_style = { name = "大式", level = 1 }
-medium_style = { name = "大式无斗拱", level = 2 }
-small_style = { name = "小式", level = 3 }
+"大式" = "large_style"
+"大式无斗拱" = "medium_style"
+"小式" = "small_style"
 
 # 屋顶形式
 [roof_forms]

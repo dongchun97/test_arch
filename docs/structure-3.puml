@@ -1,140 +1,105 @@
-@startuml test
-title test_arch
+@startuml
+title 《清式建筑自动建模系统》架构类图（简化整合版）
 
-' ==============================
-' 一级结构：配置 / 数据 / 核心逻辑 / 几何建模 / 构件组装 / 工具 / 主程序
-' ==============================
-package "configs" {
+'======================
+' 配置层
+'======================
+package "configs" #LightYellow {
     class ConfigManager {
-        +load_toml(file)
-        +get_building_systems()
-        +get_component_library()
-        +get_app_settings()
+        +load_settings()
+        +get_system_template()
     }
+
+    class BuildingClassificationToml
+    class BuildingSystemsToml
+    class AppSettingsToml
 }
 
-package "data" {
+'======================
+' 数据核心层
+'======================
+package "core" #LightBlue {
     class DataLoader {
-        + csv_path: str
-        + headers: list = []
-        + data: Any = None
+        +load_csv()
+        +get_building_data(row_index)
+        +get_basic_info()
+        +get_structure_info()
+        +get_description_info()
+        +get_dimension_info()
+    }
 
-        + load_csv(path) -> np.ndarray
-        + get_str_value(row: np.ndarray, field_name: str, as_float: bool = false): Any
-        + get_record() -> list
+    class ComponentCalculator {
+        +calculate_geometry(dimension_info)
+        +generate_grids()
+        +get_pillars_coords()
+        +get_height_dict()
     }
 }
 
-package "core" {
-    class Calculator {
-        + compute_dimensions(data)
-        + compute_proportions(form_type)
-        + compute_coordinates(grid_data)
-    }
-}
+ConfigManager --> DataLoader : "配置文件路径"
+DataLoader --> ComponentCalculator : "dimension_info 数据"
 
-package "geometry" {
-    class PillarGeometry {
-        + create_pillar_mesh(D, H)
-    }
-    class BeamGeometry {
-        + create_beam_mesh(L, W, H)
-    }
-    class RoofGeometry {
-        + create_roof_mesh(form_type, params)
-    }
-    class WallGeometry {
-        + create_wall_mesh(thickness, height)
-    }
-}
-
-package "structure.components.timber" {
+'======================
+' 几何建模层
+'======================
+package "structure.components" #LightGreen {
     class Pillar {
-        + build(calculator)
+        +create_bmesh(diameter, height)
+        +to_object()
     }
-    class Beam {
-        + build(calculator)
-    }
-    class Purlin {
-        + build(calculator)
-    }
+    class Beam
+    class Roof
 }
 
-package "structure.systems" {
-    class PillarNet {
-        + build_grid()
-        + place_pillars(pillar_objects)
+ComponentCalculator --> Pillar : "diameter, height"
+
+'======================
+' 系统组合层（Frame）
+'======================
+package "structure.frame" #LightSkyBlue {
+    class PillarFrame {
+        +create_from_coords(pillars_coords, component)
     }
-    class BeamFrame {
-        + assemble_beams(pillar_net)
-    }
-    class RoofSystem {
-        + assemble_roof(beam_frame)
-    }
-    class WallSystem {
-        + assemble_wall(base, body)
-    }
+    class BeamFrame
+    class RoofSystem
 }
 
-package "structure" {
+Pillar --> PillarFrame : "pillar object"
+ComponentCalculator --> PillarFrame : "pillars_coords"
+
+'======================
+' 装配层
+'======================
+package "structure" #LightGray {
     class Assembler {
-        + assemble_building(form_type, calc_results)
-        + build_structure_layers()
-        + connect_components()
+        +build_building()
+        +combine_frames()
     }
 
-    class Placement {
-        + align_objects()
-        + set_parenting()
-    }
-
-    class Collection {
-        + group_by_system()
-        + manage_collections()
+    class Utils {
+        +init_collection(basic_info)
+        +get_or_create_mesh(name)
     }
 }
 
-package "utils" {
-    class MeshPool {
-        + get_mesh(key)
-        + store_mesh(key, mesh)
-    }
+PillarFrame --> Assembler : "pillar system list"
+BeamFrame --> Assembler
+RoofSystem --> Assembler
+Utils --> Assembler : "集合与mesh池检查"
+
+'======================
+' 主生成控制层
+'======================
+class Generator {
+    +load_data()
+    +calculate()
+    +assemble()
+    +run()
 }
 
-package "generator" {
-    class Generator {
-        + generate_building(record)
-        + export_model(output_path)
-    }
-}
+Generator --> DataLoader : "加载数据"
+Generator --> ComponentCalculator : "计算几何参数"
+Generator --> Assembler : "组装建筑"
+Assembler --> Utils : "调用集合检查"
 
-package "main" {
-    class Main {
-        + run()
-    }
-}
-
-' ==============================
-' 模块间依赖关系
-' ==============================
-Main --> Generator
-Generator --> DataLoader
-Generator --> ConfigManager
-Generator --> Calculator
-Generator --> Assembler
-Assembler --> PillarNet
-Assembler --> BeamFrame
-Assembler --> RoofSystem
-Assembler --> WallSystem
-Assembler --> Placement
-Assembler --> Collection
-PillarNet --> Pillar
-BeamFrame --> Beam
-RoofSystem --> Purlin
-WallSystem --> WallGeometry
-Pillar --> PillarGeometry
-Beam --> BeamGeometry
-RoofSystem --> RoofGeometry
-Calculator --> ConfigManager
-Geometry ..> Utils : uses mesh pool
 @enduml

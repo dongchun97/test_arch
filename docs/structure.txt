@@ -3,35 +3,30 @@ test_arch/
 ├── configs/                   # 配置参数
 │   ├── __init__.py
 │   ├── config_manager.py      
-│   ├── building_classification.toml # 提供分类信息，用于识别建筑类型
-│   ├── building_systems.toml       # 提供构件组装模板，定义创建顺序
-│   ├── component_library.toml  # 提供构件基本比例，支持公式计算
-│   └── app_settings.toml       # 提供系统行为设置
+│   ├── building_classification.toml    # 提供分类信息，用于识别建筑类型，提供大式、小式不同等级建筑的柱径比例和尺寸
+│   ├── building_systems.toml           # 提供构件组装模板，定义创建顺序
+│   └── app_settings.toml               # 提供系统行为设置
 │
 ├── data/                        # 数据存储（CSV/XLS）
-│   ├── data.csv                 # 园林建筑基本数据，每一行代表一个建筑     
-│   └── data2.xls                # 园林建筑基本数据，每一行代表一个建筑     
+│   └── data2.csv                # 园林建筑基本数据，每一行代表一个建筑
 │ 
 ├── core/
-│   ├── data_manager.py        # 合并 loader + calculator
+│   ├── data_loader.py            # 数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info
+│   ├── component_calculator.py        # 数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
 │   └── __init__.py
 │
 ├── structure/
-│   ├── collection.py
-│   ├── assembler.py           # 含 placement 功能
-│   ├── systems/
-│   │   ├── pillar_net.py
+│   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、structure_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建
+│   ├── assembler.py           # 输入主要标高信息和构件网格对象，组合功能创建组合，输入description_info（含 placement 功能 ）判断正房、厢房、倒座房
+│   ├── frame/                #改名为 frame,与子模块统一名称
+│   │   ├── pillar_frame.py       # 改名为pillar_frame，统一名称，输入pillars_coords、components对象，遍历位置创建柱网
 │   │   ├── beam_frame.py
 │   │   └── roof_system.py
-│   ├── components/
-│   │   ├── pillar.py          # 内含 create_pillar_mesh() + build_grid()
+│   ├── components/             #创建bmesh对象，返回mesh\object对象，不链接到集合
+│   │   ├── pillar.py          # 输入eave_diameter、eave_height，返回檐柱对象，应考虑柱类，根据檐柱高柱径返回金柱、瓜柱、童柱等对象
 │   │   ├── beam.py
 │   │   ├── roof.py
 │   │   └── __init__.py
-│   └── __init__.py
-│
-├── utils/
-│   ├── mesh_pool.py
 │   └── __init__.py
 │
 ├── tests/ 
@@ -67,3 +62,19 @@ test_arch/
 
 这是一个使用blender api的传统木结构建筑生成项目，以上是项目设计架构，
 项目中涉及大量的object\mesh\collection以及园林名称、建筑名称、建筑类型等，尤其是mesh会有大量复用，给我一个规范化的命名规则
+
+
+├── data/                        # 数据存储（CSV/XLS）
+│   └── data2.csv                # 园林建筑基本数据，每一行代表一个建筑
+│ 
+├── core/
+│   ├── data_loader.py            # 数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info
+│   ├── data_calculator.py        # 数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords等
+│   └── __init__.py
+│
+├── structure/
+│   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、structure_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建
+│   ├── assembler.py           # 组合功能，输入description_info（含 placement 功能 ）判断正房、厢房、倒座房
+│   ├── component_frame.py           # systems构件组合的逻辑，包含pillar_frame（pillar_net）、beam_frame、roof_frame等，是否需要创建统一的构造方法
+│   ├── components/    # 
+│   │   ├── pillar.py          # 内含 create_pillar_mesh() + build_grid()
