@@ -1,61 +1,43 @@
 # generator.py
-# 简化后的自动建模生成器，负责调度各模块逻辑
-
-from core.data_manager import DataManager
+from core.data_loader import DataLoader
+from core.component_calculator import ComponentCalculator
 from structure.assembler import Assembler
-from structure.collection import Collection
-
 
 class Generator:
     """
-    统一的建筑生成器
-    职责：
-    1. 加载并解析数据
-    2. 调用尺寸计算模块（DataManager）
-    3. 调用装配模块（Assembler）生成建筑
-    4. 管理集合层级（Collection）
+    统一生成流程控制器：
+    1. 加载数据（DataLoader）
+    2. 计算构件与位置（ComponentCalculator）
+    3. 组装建筑（Assembler）
     """
 
-    def __init__(self, csv_path: str, row_index: int = 0):
-        self.csv_path = csv_path
-        self.row_index = row_index
-
-        self.data_manager = None
-        self.collection = None
+    def __init__(self, data_path, row=0):
+        self.data_path = data_path
+        self.row = row
+        self.loader = DataLoader(data_path)
+        self.calculator = None
         self.assembler = None
 
-        # 数据缓存
-        self.building_data = {}
-        self.calc_results = {}
+    def run(self): 
+        """完整生成流程"""
+        # Step 1: 加载数据
+        building_data = self.loader.get_building_data(self.row)
+        basic_info = building_data["basic_info"]
+        dimension_info = building_data["dimension_info"]
 
-    def prepare_data(self):
-        """加载与计算建筑数据"""
-        self.data_manager = DataManager(self.csv_path)
-        self.building_data = self.data_manager.get_building_data(self.row_index)
-        self.calc_results = self.data_manager.calculate_dimensions(self.building_data)
+        # Step 2: 计算构件数据
+        self.calculator = ComponentCalculator(dimension_info)
+        calc_data = self.calculator.calculate_all()
 
-    def build_structure(self):
-        """建立建筑系统并组装"""
-        self.collection = Collection(self.building_data["basic_info"])
+        # Step 3: 组装模型
         self.assembler = Assembler(
-            calc_data=self.calc_results,
-            collection=self.collection
+            basic_info=basic_info,
+            calc_data=calc_data
         )
-        building_obj = self.assembler.build_building()
-        return building_obj
+        self.assembler.build()
 
-    def run(self):
-        """执行完整流程"""
-        print(" 正在加载与计算数据...")
-        self.prepare_data()
-
-        print(" 正在生成建筑结构...")
-        building = self.build_structure()
-
-        print(" 建筑生成完成！")
-        return building
-
+        print(f"✅ {basic_info['name']} 建筑生成完成。")
 
 if __name__ == "__main__":
-    gen = Generator("data/data.csv", row_index=0)
+    gen = Generator("data/data2.csv", row=0)
     gen.run()

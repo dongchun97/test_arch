@@ -1,2 +1,2 @@
 from .assembler import Assembler
-from .collection import Collection
+from .utils import Collection

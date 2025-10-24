@@ -27,6 +27,10 @@ pavilion = { name = "亭类建筑", description = "亭、榭等点景建筑" }
 "大式无斗拱" = "medium_style"
 "小式" = "small_style"
 
+[construction_grades.large_style]
+pillars = { pillar_eave=0.1,pillar_gold=0.12 }
+beams = { beam_fifth=0.1,beam_fourth=0.1,beam_third=0.1 }
+
 # 屋顶形式
 [roof_forms]
 hard_hill = "硬山"

@@ -1,5 +1,5 @@
 # structure/assembler.py
-from structure.systems.pillar_net import PillarNetSystem
+from structure.systems.pillar_frame import PillarNetSystem
 
 # from structure.systems.beam_frame import BeamFrameSystem
 # from structure.systems.roof_system import RoofSystem
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     import sys, pathlib
 
     sys.path.append(str(pathlib.Path(__file__).parent.parent))
-    from structure.systems.pillar_net import PillarNetSystem
+    from structure.systems.pillar_frame import PillarNetSystem
 
     assembl = Assembler()
     assembl.build_pillar_net()

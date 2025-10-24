@@ -1,2 +1,2 @@
 from .data_loader import DataLoader
-from .calculator import FrameGeometryCalculator
+from .component_calculator import FrameGeometryCalculator
