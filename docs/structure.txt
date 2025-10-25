@@ -4,7 +4,6 @@ test_arch/
 │   ├── __init__.py
 │   ├── config_manager.py      
 │   ├── building_classification.toml    # 提供分类信息，用于识别建筑类型，提供大式、小式不同等级建筑的柱径比例和尺寸
-│   ├── building_systems.toml           # 提供构件组装模板，定义创建顺序
 │   └── app_settings.toml               # 提供系统行为设置
 │
 ├── data/                        # 数据存储（CSV/XLS）

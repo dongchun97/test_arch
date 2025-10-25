@@ -2,6 +2,9 @@
 version = "1.0.0"
 default_units = "meters"
 
+[rules]
+scale = 1
+
 [generation]
 # 模型精度等级
 [generation.precision_levels]

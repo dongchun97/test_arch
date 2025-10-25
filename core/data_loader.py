@@ -89,8 +89,8 @@ class DataLoader:
         }
 
         # 3. 描述信息
-        description_info = {
-            "form": self.get_value(row, "描述1"),
+        precision_info = {
+            "pricision": self.get_value(row, "模型精度"),
         }
 
         # 5. 尺寸信息
@@ -117,7 +117,7 @@ class DataLoader:
         self.building_data = {
             "basic_info": basic_info,
             "structure_info": structure_info,
-            "description_info": description_info,
+            "precision_info": precision_info,
             "dimension_info": {
                 "num_bays": bays,
                 "bay_widths": bay_widths.tolist(),
@@ -135,6 +135,7 @@ if __name__ == "__main__":
     loader = DataLoader("data/data-2.csv")
     loader.load_csv()
     loader.get_building_data(row_index=0)
+    print(loader.building_data)
 
 
     # 获取第一个建筑的数据
