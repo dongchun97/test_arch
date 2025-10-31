@@ -1,8 +1,6 @@
 test_arch/
 │
 ├── configs/                   # 配置参数
-│   ├── __init__.py
-│   ├── config_manager.py      
 │   ├── building_classification.toml    # 提供分类信息，用于识别建筑类型，提供大式、小式不同等级建筑的柱径比例和尺寸
 │   └── app_settings.toml               # 提供系统行为设置
 │
@@ -10,7 +8,8 @@ test_arch/
 │   └── data2.csv                # 园林建筑基本数据，每一行代表一个建筑
 │ 
 ├── core/
-│   ├── data_loader.py            # 数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info
+│   ├── data_loader.py            # 数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info、structure_name
+│   ├── config_loader.py            # 配置加载器，输入structure_name，查找configs对应的配置信息（预设信息、建筑信息）
 │   ├── component_calculator.py        # 数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
 │   └── __init__.py
 │

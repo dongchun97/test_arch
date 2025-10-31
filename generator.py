@@ -1,7 +1,8 @@
 # generator.py
 from core.data_loader import DataLoader
-from core.component_calculator import ComponentCalculator
+from core.components_calculator import ComponentCalculator
 from structure.assembler import Assembler
+
 
 class Generator:
     """
@@ -18,7 +19,7 @@ class Generator:
         self.calculator = None
         self.assembler = None
 
-    def run(self): 
+    def run(self):
         """完整生成流程"""
         # Step 1: 加载数据
         building_data = self.loader.get_building_data(self.row)
@@ -30,13 +31,11 @@ class Generator:
         calc_data = self.calculator.calculate_all()
 
         # Step 3: 组装模型
-        self.assembler = Assembler(
-            basic_info=basic_info,
-            calc_data=calc_data
-        )
+        self.assembler = Assembler(basic_info=basic_info, calc_data=calc_data)
         self.assembler.build()
 
         print(f"✅ {basic_info['name']} 建筑生成完成。")
+
 
 if __name__ == "__main__":
     gen = Generator("data/data2.csv", row=0)

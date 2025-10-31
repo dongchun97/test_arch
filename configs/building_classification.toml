@@ -1,29 +1,9 @@
-[general]
-version = "1.0"
-description = "古建筑参数化设计配置"
-
-
 # 建筑主要类别
 [building_categories]
 building = { name = "房屋建筑", description = "主要的居住和使用建筑" }
 gate = { name = "门类建筑", description = "各种类型的门建筑" }
 corridor = { name = "廊类建筑", description = "连接和交通功能的廊建筑" }
 pavilion = { name = "亭类建筑", description = "亭、榭等点景建筑" }
-
-
-# 建筑等级
-[construction_grades]
-large_style_optional_roofs = [
-    "hip_roof",
-    "hip_roof_palace",
-    "pyramidal_roof",
-] # 可用庑殿、歇山、悬山
-
-
-grade_1 = {} # 大式一等建筑构件参数斗口制
-grade_2 = "D1" # 大式无斗拱檐柱径制
-grade_3 = "D2" # 小式檐柱径制
-
 
 # 屋顶形式
 [roof_forms]
@@ -32,6 +12,14 @@ hanging_hill = "悬山"
 hip_roof = "歇山"
 hip_roof_palace = "庑殿"
 pyramidal_roof = "攒尖"
+
+
+# 建筑等级
+[construction_grades]
+grade_1 = {}                                # 大式一等建筑构件参数斗口制
+grade_2 = { diameter = 0.1, height = 1.0 }  # 大式无斗拱檐柱径制
+grade_3 = { diameter = 0.07, height = 0.8 } # 小式檐柱径制
+
 
 # 屋脊类型
 [ridge_types]
@@ -45,12 +33,9 @@ front_corridor = true
 # 通则
 [general_rules]
 
-[general_rules.eave_pillsr]
-D1 = { diameter = 0.1, height = 1.0 }
-D2 = { diameter = 0.07, height = 0.8 }
-
 # 收分
 [general_rules.tilted]
+
 
 # 出水回水
 [general_rules.overhang]
@@ -78,18 +63,14 @@ beam_specs = { baotouliang = [0.18, 0.25, 4.2] }
 # 建筑形式
 [building_forms]
 
-[building_forms.four_purlin_roll_shed_small]
-construction_grade = "small_style_2"
-roof_type = "hard_hill"
-ridge_type = "roll_shed"
-description = "四檩卷棚小式建筑"
+# 六檩卷棚大式
+[building_forms."六檩卷棚大式"]
+name = "six_purlin_roll_shed_large"
+construction_grade = "grade_2"
+is_pillar_eave = true
 
-[building_forms.six_purlin_hard_hill_large]
-construction_grade = "large_style_1"
-roof_type = "hard_hill"
-ridge_type = "ridge_roof"
-description = "六檩硬山大式建筑"
-has_dougong = true                   # 有斗拱
-has_flying_rafters = true            # 有飞椽
-modular_system = "doukou"            # 斗口制
-can_use_colors = true                # 可用彩画
+# 四檩卷棚小式
+[building_forms."四檩卷棚小式"]
+name = "four_purlin_roll_shed_small"
+construction_grade = "grade_3"
+is_pillar_eave = true

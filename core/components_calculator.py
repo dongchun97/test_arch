@@ -1,6 +1,7 @@
 import numpy as np
 from dataclasses import dataclass, asdict
 import math
+from config_loader import ConfigLoader
 
 
 @dataclass
@@ -27,8 +28,8 @@ class FrameGeometryCalculator:
     eave_step:檐步架
     symmetry=True,
 
-    : D
-    : H
+    : diameter
+    : height
     : num_purlins
     : ridge_distance
     : x_grid
@@ -40,12 +41,14 @@ class FrameGeometryCalculator:
 
     def __init__(
         self,
+        globle_scale,
         num_bays,
         bay_widths,
         depth_total,
         eave_step,
         symmetry=True,
     ):
+        self.globle_scale = globle_scale
         self.num_bays = num_bays
         self.bay_widths = bay_widths
         self.depth_total = depth_total
@@ -53,8 +56,8 @@ class FrameGeometryCalculator:
         self.symmetry = symmetry
 
         # 初始化空数据
-        self.D = None
-        self.H = None
+        self.diameter = None
+        self.height = None
         self.num_purlins = None
         self.ridge_distance = None
         self.x_grid = None
@@ -67,19 +70,20 @@ class FrameGeometryCalculator:
     # 主流程入口
     # --------------------------------------------------------
     def compute_all(self):
-        self._compute_eave_and_purlin()
+        self._compute_eave_and_ridge_distance()
         self._compute_grids()
         self._compute_pillars_coords()
         self._compute_beams()
         self._compute_gables()
         self._compute_eave_and_corner_beams()
         return self._export_result()
-    
-    def _compute_eave_and_purlin(self):
-        self.D=self.bay_widths[0]*0.08
-        self.H=self.bay_widths[0]*0.07
 
-        self.num_purlins = int(self.depth_total // self.eave_step)+2  # 檩数
+    def _compute_eave_and_ridge_distance(self):
+
+        self.diameter = self.bay_widths[0] * 0.08
+        self.height = self.bay_widths[0] * 0.07
+
+        self.num_purlins = int(self.depth_total // self.eave_step) + 2  # 檩数
         self.ridge_distance = self.depth_total % self.eave_step  # 脊步架
 
     # --------------------------------------------------------
@@ -149,7 +153,7 @@ class FrameGeometryCalculator:
         """
         X, Y = np.meshgrid(self.x_grid, self.y_grid)
         Z = np.zeros_like(X)
-        self.pillar_coords = np.stack([X.ravel(), Y.ravel(),Z.ravel()], axis=1)
+        self.pillar_coords = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)
 
     # --------------------------------------------------------
     # Step 3: 梁枋（包括进深梁与面阔梁）
@@ -188,7 +192,7 @@ class FrameGeometryCalculator:
             (self.x_grid[0], self.y_grid[-1]),
             (self.x_grid[-1], self.y_grid[-1]),
         ]
-        wall_height = self.D * 15  # 仅示例，可用比例代替
+        wall_height = self.diameter * 15  # 仅示例，可用比例代替
         self.walls.append(Wall(front_line, wall_height, "gable"))
         self.walls.append(Wall(back_line, wall_height, "gable"))
 
@@ -238,13 +242,13 @@ class FrameGeometryCalculator:
     # --------------------------------------------------------
     def _export_result(self):
         return {
-            "D": self.D,
-            "H": self.H,
+            "diameter": self.diameter,
+            "height": self.height,
             "num_purlins": self.num_purlins,
             "ridge_distance": self.ridge_distance,
-            "x_grid": self.x_grid.tolist(),
-            "y_grid": self.y_grid.tolist(),
-            "pillars_coords": self.pillar_coords.tolist(),
+            "x_grid": self.x_grid,
+            "y_grid": self.y_grid,
+            "pillars_coords": self.pillar_coords,
             "beams": [asdict(b) for b in self.beams],
             "walls": [asdict(w) for w in self.walls],
         }
@@ -252,13 +256,35 @@ class FrameGeometryCalculator:
 
 if __name__ == "__main__":
 
-    data={
-        "num_bays":5,
-        "bay_widths":[1.2, 1.0, 1.0],
-        "depth_total":1.8,
-        "eave_step":0.4,
-        }
-    calc = FrameGeometryCalculator(**data)
+    from numpy import array
+
+    data = {
+        "category_info": {
+            "building_category": "房屋",
+            "sub_category": "正房",
+            "roof_forms": "歇山",
+            "corridor": "无廊",
+        },
+        "precision_info": {"pricision": ""},
+        "dimension_info": {
+            "num_lin": 6,
+            "num_bays": 5,
+            "bay_widths": [1.0, 1.0, 1.0],
+            "depth_total": array(1.5),
+            "eave_step": array(0.35),
+        },
+        "structure_name": "六檩卷棚大式",
+    }
+    dimension_info = data["dimension_info"]
+    structure_name = data["structure_name"]
+
+    configloader = ConfigLoader(data)
+    globe_scale = configloader.get_scale
+
+    calc = FrameGeometryCalculator(**dimension_info)
     calc.compute_all()
 
-    print(calc.x_grid)
+    # print(calc.diameter)
+    # print(calc.height)
+    # print(calc.x_grid)
+    # print(calc.y_grid)

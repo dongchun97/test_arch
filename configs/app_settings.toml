@@ -1,23 +1,15 @@
 [system]
 version = "1.0.0"
-default_units = "meters"
 
-[rules]
+
+[default]
+units = "meters"
 scale = 1
+segments = 16
 
-[generation]
-# 模型精度等级
-[generation.precision_levels]
-high = 32
-medium = 16
-low = 8
-draft = 4
-
-# 默认精度
-default_precision = "medium"
 
 # 精度相关的生成选项
-[generation.options]
+[options]
 auto_lod = true            # 是否自动根据距离调整细节层次
 memory_optimization = true # 是否启用内存优化
 
