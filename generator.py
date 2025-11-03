@@ -1,14 +1,15 @@
 from core import DataLoader
 from core import ConfigLoader
 from core import CalculatorFactory
-from configs import RuleManager
+from configs import RuleEngine, ConfigManager
 
 
 class Generator:
     def __init__(self):
         self.data_loader = DataLoader()
         self.config_loader = ConfigLoader()
-        self.rule_manager = RuleManager("configs/rules.json")
+        self.config_manager = ConfigManager("configs")
+        self.rule_engine = RuleEngine(self.config_manager)
 
     def run(self):
         # Step 1: 加载数据（建筑信息）

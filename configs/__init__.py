@@ -1,2 +1,2 @@
 from .config_manager import ConfigManager
-from .rule_manager import RuleManager
+from .rule_engine import RuleEngine
