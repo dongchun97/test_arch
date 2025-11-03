@@ -1,0 +1,10 @@
+{
+    "房屋": {
+        "calculator_class": "HouseCalculator",
+        "config_file": "house_config.toml"
+    },
+    "亭": {
+        "calculator_class": "PavilionCalculator",
+        "config_file": "pavilion_config.toml"
+    }
+}

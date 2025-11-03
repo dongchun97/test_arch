@@ -1,21 +1,18 @@
-import sys
-import os
-
-# 如果有你自己的模块（如 utils/），把它加入 sys.path
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-if BASE_DIR not in sys.path:
-    sys.path.append(BASE_DIR)
-
-
 from generator import Generator
 
 
 def main():
-    gen = Generator(csv_data,row)
-    print(gen.calc_results.x_grid)
+    csv_path = "data/data2.csv"
+    generator = Generator(csv_path)
+
+    # 假设CSV中每一行是一个建筑
+    for i in range(generator.get_row_count()):
+        try:
+            result = generator.run(i)
+            print(f"成功生成第 {i+1} 个建筑：{result['building_name']}")
+        except Exception as e:
+            print(f"第 {i+1} 个建筑生成失败：{e}")
 
 
 if __name__ == "__main__":
-    csv_data = "data/data-2.csv"
-    row = 2
     main()

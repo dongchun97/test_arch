@@ -1,88 +1,42 @@
 @startuml
-skinparam style strictuml
-skinparam packageStyle rectangle
-skinparam classAttributeIconSize 0
 
-title 清式建筑建模系统 - 简化架构类关系
-
-package core {
-  class DataManager {
-    - path: str
-    - csv_data: list
-    - headers: list
-    + get_building_data(row_index: int): dict
-    + calculate_dimensions(data: dict): dict
+package "Main Layer" {
+  class Main {
+    + main()
   }
 }
 
-package structure {
-  class Assembler {
-    - calc_data: dict
-    - collection: Collection
-    + build_building(): bpy.types.Object
-  }
-
-  class Collection {
-    - basic_info: dict
-    + create_garden_collection()
-    + create_building_collection()
-  }
-
-  package components {
-    class Pillar {
-      + create_pillar_mesh(diameter, height)
-      + build_grid(coords): list[bpy.types.Object]
-    }
-
-    class Beam {
-      + create_beam(length, width, height)
-    }
-
-    class Roof {
-      + create_roof(style)
-    }
-  }
-
-  package systems {
-    class PillarNet {
-      + build_from_calc(calc_data: dict): list[bpy.types.Object]
-    }
-
-    class BeamFrame {
-      + build_from_calc(calc_data: dict): list[bpy.types.Object]
-    }
-
-    class RoofSystem {
-      + build_from_calc(calc_data: dict): list[bpy.types.Object]
-    }
+package "Generator Layer" {
+  class Generator {
+    - data_loader
+    - config_loader
+    - calculator
+    + run(row)
   }
 }
 
-package utils {
-  class MeshPool {
-    + get_or_create(name: str): bpy.types.Mesh
-  }
+package "Core Layer" {
+  class DataLoader
+  class ConfigLoader
+  class CalculatorFactory
+  class ComponentCalculator
 }
 
-class Generator {
-  - data_manager: DataManager
-  - assembler: Assembler
-  - collection: Collection
-  + prepare_data()
-  + build_structure()
-  + run()
+package "Structure Layer" {
+  class Components
+  class Frame
+  class Assembler
+  class Utils
 }
 
-' --- 关系定义 ---
-Generator --> DataManager : uses
-Generator --> Assembler : orchestrates
-Generator --> Collection : initializes
-Assembler --> Collection : uses
-Assembler --> PillarNet : builds pillar net
-Assembler --> BeamFrame : builds beam frame
-Assembler --> RoofSystem : builds roof
-PillarNet --> Pillar : uses
-BeamFrame --> Beam : uses
-RoofSystem --> Roof : uses
-Pillar, Beam, Roof --> MeshPool : check mesh
+Main --> Generator : 调用生成器
+Generator --> DataLoader : 加载原始数据
+Generator --> ConfigLoader : 加载配置
+Generator --> CalculatorFactory : 获取计算类
+CalculatorFactory --> ComponentCalculator : 创建子类实例
+Generator --> Components : 创建构件
+Generator --> Frame : 生成结构系统
+Generator --> Assembler : 组合建筑
+Assembler --> Utils : 集合与mesh池管理
+
 @enduml

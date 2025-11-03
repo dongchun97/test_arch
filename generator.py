@@ -1,42 +1,35 @@
-# generator.py
-from core.data_loader import DataLoader
-from core.components_calculator import ComponentCalculator
-from structure.assembler import Assembler
+from core import DataLoader
+from core import ConfigLoader
+from core import CalculatorFactory
+from configs import RuleManager
 
 
 class Generator:
-    """
-    统一生成流程控制器：
-    1. 加载数据（DataLoader）
-    2. 计算构件与位置（ComponentCalculator）
-    3. 组装建筑（Assembler）
-    """
-
-    def __init__(self, data_path, row=0):
-        self.data_path = data_path
-        self.row = row
-        self.loader = DataLoader(data_path)
-        self.calculator = None
-        self.assembler = None
+    def __init__(self):
+        self.data_loader = DataLoader()
+        self.config_loader = ConfigLoader()
+        self.rule_manager = RuleManager("configs/rules.json")
 
     def run(self):
-        """完整生成流程"""
-        # Step 1: 加载数据
-        building_data = self.loader.get_building_data(self.row)
-        basic_info = building_data["basic_info"]
-        dimension_info = building_data["dimension_info"]
+        # Step 1: 加载数据（建筑信息）
+        data = self.data_loader.load_data()
 
-        # Step 2: 计算构件数据
-        self.calculator = ComponentCalculator(dimension_info)
-        calc_data = self.calculator.calculate_all()
+        # Step 2: 根据 category_info 获取建筑类型
+        category = data["category_info"]["building_category"]
 
-        # Step 3: 组装模型
-        self.assembler = Assembler(basic_info=basic_info, calc_data=calc_data)
-        self.assembler.build()
+        # Step 3: 根据规则表查询对应配置
+        rule = self.rule_manager.get_rule(category)
+        config = self.config_loader.load_config(rule["config_file"])
 
-        print(f"✅ {basic_info['name']} 建筑生成完成。")
+        # Step 4: 创建正确的计算器实例
+        calculator = CalculatorFactory.create(rule["calculator_class"], config)
+
+        # Step 5: 执行计算
+        result = calculator.compute(data)
+        return result
 
 
 if __name__ == "__main__":
-    gen = Generator("data/data2.csv", row=0)
+    csv_data = "data/data.csv"
+    gen = Generator(csv_data, row=0)
     gen.run()

@@ -41,7 +41,6 @@ class BasicInfoFormatter(BaseFormatter):
         return {
             "garden_name": self._get_value(row, "园林名称"),
             "garden_id": self._get_value(row, "园中园编号"),
-            "sub_garden_name": self._get_value(row, "园中园名称"),
             "building_id": self._get_value(row, "建筑编号"),
             "building_name": self._get_value(row, "建筑名称"),
         }
@@ -107,7 +106,7 @@ class DimensionInfoFormatter(BaseFormatter):
         # 结构名称
         ridge_types = self._get_value(row, "屋脊类型")
         construction_grades = self._get_value(row, "建筑等级")
-        structure_name = f"{purlin_name}{ridge_types}{construction_grades}"
+        # structure_name = f"{purlin_name}{ridge_types}{construction_grades}"
 
         return {
             "num_lin": num_purlins,
@@ -115,7 +114,7 @@ class DimensionInfoFormatter(BaseFormatter):
             "bay_widths": bay_widths,
             "depth_total": depth_total,
             "eave_step": eave_step,
-            "structure_name": structure_name,
+            # "structure_name": structure_name,
         }
 
 
@@ -218,17 +217,17 @@ class DataLoader:
 
 if __name__ == "__main__":
     # 初始化
-    loader = DataLoader("data/building_data.csv")
+    loader = DataLoader("data/data.csv")
 
     # 方式1：按需获取特定数据段（懒加载）
-    basic_info = loader.get_building_section(0, "basic_info")
-    dimension_info = loader.get_building_section(0, "dimension_info")
-    print(basic_info)
-    print(dimension_info)
+    # basic_info = loader.get_building_section(0, "basic_info")
+    # dimension_info = loader.get_building_section(0, "dimension_info")
+    # print(basic_info)
+    # print(dimension_info)
 
     # # 方式2：获取完整建筑数据
-    # complete_data = loader.get_complete_building_data(0)
-    # print(complete_data)
+    complete_data = loader.get_complete_building_data(0)
+    print(complete_data)
     # print(complete_data["basic_info"]["building_name"])
     # print(complete_data["dimension_info"]["structure_name"])
 

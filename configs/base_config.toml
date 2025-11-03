@@ -1,0 +1,12 @@
+[system]
+version = "1.0.0"
+
+[common]
+scale = 100
+unit = "meter"
+
+# [generation]
+# precision_high_level = 32
+# precision_medium_level = 16
+# precision_low_level = 8
+# precision_draft_level = 4

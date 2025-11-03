@@ -1,17 +1,27 @@
 test_arch/
 │
 ├── configs/                   # 配置参数
-│   ├── building_classification.toml    # 提供分类信息，用于识别建筑类型，提供大式、小式不同等级建筑的柱径比例和尺寸
-│   └── app_settings.toml               # 提供系统行为设置
+│   ├── rules.json                  # 规则表，定义建筑类型与计算器类的映射关系（动态调度）
+│   ├── base_config.toml                 # 定义系统级参数，定义单位、比例、默认参数
+│   ├── geometry_config.toml    # 提供构件尺寸比例信息，如大式、小式的檐柱信息
+│   ├── house_config.toml           # 定义具体建筑形式属性（形制参数），如斗拱、飞檐、模数系统等
+│   ├── config_manager.py           # 通用配置加载器，加载base_config.toml、house_config.toml、style_config.toml等
+│   └── rule_manager.py          # 规则调度，从rules.json读取建筑类型→计算器类映射关系
 │
 ├── data/                        # 数据存储（CSV/XLS）
-│   └── data2.csv                # 园林建筑基本数据，每一行代表一个建筑
+│   └── data.csv                # 园林建筑基本数据，每一行代表一个建筑
 │ 
 ├── core/
-│   ├── data_loader.py            # 数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info、structure_name
-│   ├── config_loader.py            # 配置加载器，输入structure_name，查找configs对应的配置信息（预设信息、建筑信息）
-│   ├── component_calculator.py        # 数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
-│   └── __init__.py
+│    ├── __init__.py
+│    ├── data_loader.py                 #数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info、structure_name
+│    ├── config_loader.py               #配置加载器，输入structure_name，查找configs对应的配置信息（预设信息、建筑信息）
+│    ├── calculator_factory.py           #决定“实例化谁”；
+│    ├── component_calculator.py        #决定“怎么算”；数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
+│    └── calculators/
+│         ├── __init__.py
+│         ├── base_calculator.py
+│         ├── house_calculator.py
+│         └── pavilion_calculator.py
 │
 ├── structure/
 │   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、structure_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建
@@ -62,17 +72,37 @@ test_arch/
 项目中涉及大量的object\mesh\collection以及园林名称、建筑名称、建筑类型等，尤其是mesh会有大量复用，给我一个规范化的命名规则
 
 
-├── data/                        # 数据存储（CSV/XLS）
-│   └── data2.csv                # 园林建筑基本数据，每一行代表一个建筑
-│ 
-├── core/
-│   ├── data_loader.py            # 数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info
-│   ├── data_calculator.py        # 数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords等
-│   └── __init__.py
+                 ┌────────────────────────┐
+                 │         main.py         │
+                 │  程序入口：加载CSV、调用generator │
+                 └──────────┬─────────────┘
+                            │
+                            ▼
+               ┌────────────────────────┐
+               │      generator.py       │
+               │  调度主模块：组织建模流程 │
+               │  调用configs、core、structure等 │
+               └──────────┬─────────────┘
+                            │
+     ┌──────────────────────┼────────────────────────────┐
+     │                      │                            │
+     ▼                      ▼                            ▼
+┌──────────────┐     ┌────────────────┐          ┌─────────────────┐
+│ configs/      │     │ core/          │          │ structure/       │
+│ 配置与规则系统 │     │ 计算逻辑层       │          │ 结构生成与定位层   │
+└─────┬──────────┘     └────┬───────────┘          └────┬────────────┘
+      │                      │                           │
+      │                      │                           │
+      ▼                      ▼                           ▼
+┌──────────────┐     ┌────────────────┐          ┌──────────────────┐
+│ config_manager│     │ calculator_factory│       │ collection.py     │
+│ 读取toml/json配置 │  │ 根据rules分发计算器类 │   │ 建立对象集合         │
+└──────────────┘     └────────────────┘          └──────────────────┘
 │
-├── structure/
-│   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、structure_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建
-│   ├── assembler.py           # 组合功能，输入description_info（含 placement 功能 ）判断正房、厢房、倒座房
-│   ├── component_frame.py           # systems构件组合的逻辑，包含pillar_frame（pillar_net）、beam_frame、roof_frame等，是否需要创建统一的构造方法
-│   ├── components/    # 
-│   │   ├── pillar.py          # 内含 create_pillar_mesh() + build_grid()
+├── rule_manager.py    ← 从 rules.json 中读取建筑类型 → 计算器映射
+│
+├── base_config.toml   ← 定义系统默认参数（单位、比例）
+│
+├── house_config.toml  ← 定义各类型建筑样式（has_dougong, modular_system等）
+│
+└── style_config.toml  ← 定义doukou_style, large_style, small_style等风格特征
