@@ -1,58 +1,24 @@
-@startuml
-title 简化后清式建模系统类结构图
 
-package core {
-  class DataLoader {
-    +get_building_data(row): dict
-  }
-
-  class ComponentCalculator {
-    +calculate_all(): dict
-  }
+class CalculatorFactory {
+    +create(category_info: dict) Calculator
 }
 
-package structure {
-  class Assembler {
-    +build(): None
-  }
-
-  package geometry {
-    class Geometry {
-      +create_pillar(): bmesh
-      +create_beam(): bmesh
-    }
-  }
-
-  package systems {
-    class PillarNet {
-      +build(coords, obj): list[bpy.types.Object]
-    }
-  }
-
-  package components {
-    class Pillar {
-      +from_bmesh(bm): bpy.types.Object
-    }
-  }
-
-  package collection {
-    class CollectionManager {
-      +create_building_collection(): None
-    }
-  }
+class BaseCalculator {
+    <<abstract>>
+    -config_manager: ConfigManager
+    -rule_manager: RuleManager
+    +__init__(config_manager, rule_manager)
+    +compute(data: dict): dict
+    +_calculate_dimensions(): dict
+    +_calculate_coordinates(): dict
+    +_apply_rules(): dict
 }
 
-class Generator {
-  +run(): None
+class HouseCalculator {
+    +compute(data: dict): dict
+    +_calculate_eave_height(): float
+    +_calculate_beam_layout(): dict
 }
 
-' ---- 依赖关系 ----
-Generator --> DataLoader : 读取 CSV 数据
-Generator --> ComponentCalculator : 计算构件与坐标
-Generator --> Assembler : 组装建筑
-Assembler --> systems.PillarNet : 生成柱网
-Assembler --> components.Pillar : 构件对象化
-Assembler --> geometry.Geometry : 调用建模函数
-Assembler --> collection.CollectionManager : 管理集合
-
-@enduml
+CalculatorFactory --> BaseCalculator : creates
+BaseCalculator <|-- HouseCalculator

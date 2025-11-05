@@ -25,6 +25,8 @@
 
 
 from config_manager import ConfigManager
+
+
 class RuleEngine:
     def __init__(self):
         self.config = ConfigManager()  # 加载配置,文件夹路径
@@ -39,11 +41,13 @@ class RuleEngine:
         """统一执行所有规则"""
         result = {}
         for rule in self.rules:
-            result.update(rule(data, self.config))
+            result.update(rule(data, self.config.config))
         return result
 
+
 engine = RuleEngine()
-config=engine.config.config
+config = engine.config.config
+
 
 @engine.register
 def roof_rule(data, config):
@@ -51,15 +55,17 @@ def roof_rule(data, config):
     rule = config.get("roof_forms")["roof_forms"][roof_form]
     return {"roof_slope": rule["slope_ratio"]}
 
+
 @engine.register
 def grade_rule(data, config):
     grade = data["category_info"]["construction_grades"]
-    if grade=="小式":
-        grade="small_style"
-    elif grade=="大式":
-        grade="large_style"
+    if grade == "小式":
+        grade = "small_style"
+    elif grade == "大式":
+        grade = "large_style"
     rule = config.get("geometry_config")[grade]
     return {"column_height": rule.get("eave_pillar_height", {})}
+
 
 @engine.register
 def corridor_rule(data, config):
@@ -68,19 +74,40 @@ def corridor_rule(data, config):
     return {"wall_enclosure": rule["walls"]}
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     from numpy import array
-    
-    
-    data={'basic_info': {'garden_name': 'CC', 'garden_id': 'W01L_ABC', 'building_id': '10', 'building_name': '松篁深处'}, 'category_info': {'building_category': '房屋', 'sub_category': '正房', 'roof_forms': '歇山', 'ridge_types': '卷棚', 'construction_grades': '大式', 'corridor': '无廊'}, 'precision_info': {'pricision': ''}, 'dimension_info': {'num_lin': 6, 'num_bays': 5, 'bay_widths': array([1., 1., 1.]), 'depth_total': array(1.5), 'eave_step': array(0.35)}}
 
+    data = {
+        "basic_info": {
+            "garden_name": "CC",
+            "garden_id": "W01L_ABC",
+            "building_id": "10",
+            "building_name": "松篁深处",
+        },
+        "category_info": {
+            "building_category": "房屋",
+            "sub_category": "正房",
+            "roof_forms": "歇山",
+            "ridge_types": "卷棚",
+            "construction_grades": "大式",
+            "corridor": "无廊",
+        },
+        "precision_info": {"pricision": ""},
+        "dimension_info": {
+            "num_lin": 6,
+            "num_bays": 5,
+            "bay_widths": array([1.0, 1.0, 1.0]),
+            "depth_total": array(1.5),
+            "eave_step": array(0.35),
+        },
+    }
 
     # print(data["category_info"]["roof_forms"])
-    print(roof_rule(data,config))
-    print(grade_rule(data,config))
+    # print(roof_rule(data, config))
+    # print(grade_rule(data, config))
     # print(data["category_info"]["corridor"])
-    print(corridor_rule(data,config))
+    # print(corridor_rule(data, config))
 
     # # print(config.keys())
-    # rusult=engine.evaluate(data)
-    # print(rusult)
+    rusult = engine.evaluate(data)
+    print(rusult)

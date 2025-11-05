@@ -8,12 +8,6 @@
 "大屋脊" = { code = "hipped_ridge", top_shape = "flat" }
 
 
-[construction_grades]
-"大式斗口" = { code = "grade_1", system = "斗口制", base_ratio = 1.0 }
-"大式" = { code = "grade_2", system = "檐柱径制", diameter = 0.1, height = 1.0 }
-"小式" = { code = "grade_3", diameter = 0.07, height = 0.8 }
-
-
 [corridors]
 "无廊" = { walls = "全围合" }
 "前廊" = { walls = "三面围合", open_side = "南" }
