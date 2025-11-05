@@ -1,0 +1,38 @@
+# configs/building_forms.toml
+
+# === 基础形态定义 ===
+[base_rules]
+default_grade = "small_style"
+default_dougong_style = "none"
+
+# === 四檩卷棚小式 ===
+["四檩卷棚小式"]
+purlin_count = 4
+roof_type = "roll_shed"
+construction_grade = "small_style"
+dougong_style = "none"
+has_dougong = false
+has_flying_rafters = false
+description = "四檩卷棚小式房屋"
+
+# === 五檩川堂大木 ===
+["五檩川堂大木"]
+purlin_count = 5
+roof_type = "chuan_tang"
+construction_grade = "large_style"
+dougong_style = "doukou_style"
+has_dougong = true
+has_flying_rafters = true
+description = "五檩川堂大木构架"
+
+# === 重檐七檩歇山转角楼 ===
+["重檐七檩歇山转角楼"]
+purlin_count = 7
+roof_type = "xie_shan"
+construction_grade = "large_style"
+dougong_style = "doukou_style"
+has_dougong = true
+has_flying_rafters = true
+multi_eaves = true
+building_type = "楼"
+description = "重檐歇山转角楼"

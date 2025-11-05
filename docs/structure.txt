@@ -1,12 +1,14 @@
 test_arch/
 │
-├── configs/                   # 配置参数
-│   ├── rules.json                  # 规则表，定义建筑类型与计算器类的映射关系（动态调度）
-│   ├── base_config.toml                 # 定义系统级参数，定义单位、比例、默认参数
-│   ├── geometry_config.toml    # 提供构件尺寸比例信息，如大式、小式的檐柱信息
-│   ├── house_config.toml           # 定义具体建筑形式属性（形制参数），如斗拱、飞檐、模数系统等
-│   ├── config_manager.py           # 通用配置加载器，加载base_config.toml、house_config.toml、style_config.toml等
-│   └── rule_manager.py          # 规则调度，从rules.json读取建筑类型→计算器类映射关系
+├── configs/
+│   ├── __init__.py
+│   ├── config_manager.py
+│   ├── rule_manager.py
+│   └── rules/
+│       ├── construction_grades.toml   # 建筑等级制
+│       ├── roof_types.toml            # 屋顶形式
+│       ├── building_forms.toml        # 建筑组合形态（核心）
+│       └── structural_modules.toml    # 模数体系与构件比例
 │
 ├── data/                        # 数据存储（CSV/XLS）
 │   └── data.csv                # 园林建筑基本数据，每一行代表一个建筑

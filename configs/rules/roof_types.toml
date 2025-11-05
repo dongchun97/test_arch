@@ -1,0 +1,22 @@
+# configs/rules/roof_types.toml
+
+[roof_forms]
+
+[roof_forms.roll_shed]
+name = "卷棚"
+has_main_ridge = false
+slope_direction = "single"
+description = "卷棚顶呈弧形，常用于亭榭、过厅、廊屋等小式建筑。"
+
+[roof_forms.xie_shan]
+name = "歇山"
+has_main_ridge = true
+has_corner_ridges = true
+multi_slope = true
+description = "歇山顶四坡八脊，常用于宫殿、正厅等大式建筑。"
+
+[roof_forms.ying_shan]
+name = "硬山"
+has_main_ridge = true
+multi_slope = false
+description = "硬山顶两坡对称，无翼角，多用于住宅建筑。"
