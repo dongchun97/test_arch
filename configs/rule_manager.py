@@ -1,39 +1,7 @@
-# # configs/rule_manager.py
-# import tomllib
-# from pathlib import Path
-
-# class RuleManager:
-#     def __init__(self, rule_path: Path):
-#         self.rules = tomllib.loads(rule_path.read_text(encoding='utf-8'))
-    
-#     def find_form(self, purlin_count: int, roof_type: str, grade: str):
-#         for name, form in self.rules.items():
-#             if isinstance(form, dict) and \
-#                form.get('purlin_count') == purlin_count and \
-#                form.get('roof_type') == roof_type and \
-#                form.get('construction_grade') == grade:
-#                 return name, form
-#         return None, None
-
-# rule_manager = RuleManager(Path("configs/building_forms.toml"))
-
-# name, form_rule = rule_manager.find_form(
-#     purlin_count=5,
-#     roof_type="chuan_tang",
-#     grade="large_style"
-# )
-
-# if form_rule:
-#     print(f"Matched rule: {name}")
-#     print(form_rule['description'])
-
-# print(rule_manager.rules)
-
-# configs/rule_manager.py
-
 import tomllib
 from pathlib import Path
 from copy import deepcopy
+
 
 class RuleManager:
     def __init__(self, rules_dir: Path):
@@ -50,7 +18,7 @@ class RuleManager:
 
     def get(self, category: str, key: str):
         """按规则文件类别和键名获取定义"""
-        return self.rules.get(category, {}).get(key) or self.rules.get(category.rstrip('s'), {}).get(key)
+        return self.rules.get(category, {}).get(category.rstrip("s"), {}).get(key)
 
     def resolve_ref(self, ref: str):
         """
@@ -65,6 +33,7 @@ class RuleManager:
         """
         merged = deepcopy(base)
         for k, v in override.items():
+
             if isinstance(v, dict) and k in merged:
                 merged[k] = self.merge_rules(merged[k], v)
             else:
@@ -75,7 +44,7 @@ class RuleManager:
         """
         获取综合建筑规则（带继承机制）。
         """
-        forms = self.rules.get("building_forms", {}).get("forms", {})
+        forms = self.rules.get("building_forms", {}).get("building_form", {})
         form = deepcopy(forms.get(form_name))
         if not form:
             raise ValueError(f"未找到形态定义：{form_name}")
@@ -85,6 +54,7 @@ class RuleManager:
         # 处理继承链
         if "inherit" in form:
             for ref in form.pop("inherit"):
+
                 parent_rule = self.resolve_ref(ref)
                 if parent_rule:
                     final_rule = self.merge_rules(final_rule, parent_rule)
@@ -93,16 +63,11 @@ class RuleManager:
         final_rule = self.merge_rules(final_rule, form)
         return final_rule
 
-rm = RuleManager(Path("configs/rules"))
 
-# form_rule = rm.get_form("四檩卷棚小式")
+if __name__ == "__main__":
+    rm = RuleManager(Path("configs/rules"))
 
-# for k, v in form_rule.items():
-#     print(f"{k}: {v}")
+    form_rule = rm.get_form("四檩卷棚小式")
 
-# print(rm.rules.get("roof_types"))
-rst=rm.get("roof_types","roof_forms")
-# print(rm.rules.get("roof_types"))
-print(rst)
-
-
+    for k, v in form_rule.items():
+        print(f"{k}: {v}")

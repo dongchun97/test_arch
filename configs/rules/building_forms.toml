@@ -1,40 +1,21 @@
-# configs/rules/building_forms.toml
-
-# building_forms.toml
-
-[forms]
+[building_form]
 
 # 继承
-[forms."四檩卷棚小式"]
-inherit = ["roof_types.roll_shed", "construction_grades.small_style"]
+[building_form."四檩卷棚小式"]
+inherit = [
+    "roof_types.roll_shed",
+    "construction_grades.small_style",
+    "structural_modules.column_diameter_system",
+]
 purlin_count = 4
 description = "四檩卷棚小式房屋，常见于园林小亭或廊屋。"
 
-[forms."五檩歇山大式"]
-inherit = ["roof_types.xie_shan", "construction_grades.large_style"]
+
+[building_form."五檩歇山大式"]
+inherit = [
+    "roof_types.xie_shan",
+    "construction_grades.large_style",
+    "structural_modules.column_diameter_system",
+]
 purlin_count = 5
 description = "五檩歇山大式建筑，为中式厅堂常见构架。"
-
-
-# 完全版，待定义
-["五檩川堂大木"]
-purlin_count = 5
-roof_type = "ying_shan"
-construction_grade = "large_style"
-modular_system = "doukou_system"
-has_dougong = true
-has_flying_rafters = true
-description = "五檩川堂大木，为中式厅堂常见构架。"
-
-["重檐七檩歇山转角楼"]
-purlin_count = 7
-roof_type = "xie_shan"
-construction_grade = "large_style"
-modular_system = "doukou_system"
-has_dougong = true
-has_flying_rafters = true
-multi_eaves = true
-building_type = "楼"
-description = "重檐歇山转角楼，等级高、结构复杂，常用于宫殿。"
-
-

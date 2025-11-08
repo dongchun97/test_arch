@@ -1,8 +1,6 @@
-# configs/rules/structural_modules.toml
+[structural_module]
 
-[modules]
-
-[modules.doukou_system]
+[structural_module.doukou_system]
 base_unit = "斗口"
 base_ratio = 1.0
 pillar_height_ratio = 5.0
@@ -10,10 +8,10 @@ beam_length_ratio = 8.0
 rafter_length_ratio = 10.0
 description = "以斗口为基本模数的比例体系。"
 
-[modules.column_diameter_system]
+[structural_module.column_diameter_system]
 base_unit = "檐柱径"
-base_ratio = 1.0
-pillar_height_ratio = 6.0
+base_ratio = 0.8
+pillar_height_ratio = 0.7
 beam_length_ratio = 7.5
 rafter_length_ratio = 9.0
-description = "以檐柱径为基本模数的比例体系。"
+description = "搞定了以檐柱径为基本模数的比例体系。"

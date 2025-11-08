@@ -1,14 +1,12 @@
 from core import DataLoader
-from core import ConfigLoader
 from core import CalculatorFactory
-from configs import RuleEngine, ConfigManager
+from configs import RuleEngine, ConfigManager, RuleManager
 
 
 class Generator:
     def __init__(self):
         self.data_loader = DataLoader()
-        self.config_loader = ConfigLoader()
-        self.config_manager = ConfigManager("configs")
+        self.config_manager = RuleManager("configs/rules")
         self.rule_engine = RuleEngine(self.config_manager)
 
     def run(self):
@@ -31,6 +29,20 @@ class Generator:
 
 
 if __name__ == "__main__":
-    csv_data = "data/data.csv"
-    gen = Generator(csv_data, row=0)
-    gen.run()
+    # csv_data = "data/data.csv"
+    # gen = Generator(csv_data, row=0)
+    # gen.run()
+
+    from pathlib import Path
+    from configs.rule_manager import RuleManager
+    from core.calculator_factory import CalculatorFactory
+
+    rule_manager = RuleManager(Path("configs/rules"))
+    factory = CalculatorFactory(rule_manager)
+
+    calculator = factory.create("house")
+    result = calculator.compute("四檩卷棚小式")
+
+    print("\n计算结果：")
+    for k, v in result.items():
+        print(f"{k}: {v}")

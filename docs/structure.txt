@@ -2,9 +2,9 @@ test_arch/
 │
 ├── configs/
 │   ├── __init__.py
-│   ├── config_manager.py
-│   ├── rule_manager.py
+│   ├── rule_manager.py                # 负责所有规则加载（形态、屋顶、等级）
 │   └── rules/
+│       ├── base_config.toml           # 系统级配置（单位、比例、输出路径）
 │       ├── construction_grades.toml   # 建筑等级制
 │       ├── roof_types.toml            # 屋顶形式
 │       ├── building_forms.toml        # 建筑组合形态（核心）
@@ -17,7 +17,7 @@ test_arch/
 │    ├── __init__.py
 │    ├── data_loader.py                 #数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info、structure_name
 │    ├── config_loader.py               #配置加载器，输入structure_name，查找configs对应的配置信息（预设信息、建筑信息）
-│    ├── calculator_factory.py           #决定“实例化谁”；
+│    ├── calculator_factory.py           #决定“实例化谁”,根据类别分发计算器；
 │    ├── component_calculator.py        #决定“怎么算”；数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
 │    └── calculators/
 │         ├── __init__.py

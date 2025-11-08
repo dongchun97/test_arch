@@ -10,9 +10,3 @@ unit = "meter"
 # precision_medium_level = 16
 # precision_low_level = 8
 # precision_draft_level = 4
-
-
-[construction_grades]
-"大式斗口" = { code = "grade_1", system = "斗口制", base_ratio = 1.0 }
-"大式" = { code = "grade_2", system = "檐柱径制", diameter = 0.1, height = 1.0 }
-"小式" = { code = "grade_3", diameter = 0.07, height = 0.8 }

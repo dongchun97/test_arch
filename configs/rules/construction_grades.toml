@@ -1,16 +1,21 @@
-# configs/rules/construction_grades.toml
+[construction_grade]
 
-[grades]
-
-[grades.large_style]
+[construction_grade.doukou_style]
 name = "大式"
 system = "doukou_system"
 dougong_style = "斗口制"
-pillar_diameter_base = 0.12
 has_dougong = true
 description = "大式建筑采用斗口制，有斗拱与翼角，比例严谨。"
 
-[grades.small_style]
+[construction_grade.large_style]
+name = "大式"
+system = "column_diameter_system"
+dougong_style = "檐柱径制"
+pillar_diameter_base = 0.12
+has_dougong = false
+description = "大式建筑采用檐柱径制，无斗拱有翼角，比例严谨。"
+
+[construction_grade.small_style]
 name = "小式"
 system = "column_diameter_system"
 dougong_style = "檐柱径制"
