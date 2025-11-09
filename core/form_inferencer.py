@@ -9,8 +9,8 @@ class FormInferencer:
     2. infer_form_name() — 根据 ridge_type + grade + 檩数 生成形态名
     """
 
-    def __init__(self, data: Dict):
-        self.data = data
+    def __init__(self, building_data: Dict):
+        self.building_data = building_data
 
         self._infer_num_lin()
 
@@ -20,13 +20,13 @@ class FormInferencer:
         depth_total // eave_step + 2 = 檩数
         depth_total % eave_step = 过垄脊距离
         """
-        depth_total = float(self.data.get("dimension_info", {}).get("depth_total", {}))
-        eave_step = float(self.data.get("dimension_info", {}).get("eave_step", {}))
+        depth_total = float(self.building_data.get("dimension_info", {}).get("depth_total", {}))
+        eave_step = float(self.building_data.get("dimension_info", {}).get("eave_step", {}))
 
         num_lin = int(depth_total // eave_step + 2)
         ridge_distance = round(depth_total % eave_step, 3)
 
-        self.data["dimension_info"].update(
+        self.building_data["dimension_info"].update(
             {"num_lin": num_lin, "ridge_distance": ridge_distance}
         )
 
@@ -36,7 +36,7 @@ class FormInferencer:
         """
         组合形态名，例如 “六檩卷棚大式”
         """
-        cat = self.data.get("category_info", {})
+        cat = self.building_data.get("category_info", {})
         ridge_type = cat.get("ridge_types", "")
         grade = cat.get("construction_grades", "")
 
@@ -54,7 +54,7 @@ class FormInferencer:
 if __name__ == "__main__":
     from numpy import array
 
-    data = {
+    test_building_data = {
         "category_info": {
             "building_category": "房屋",
             "sub_category": "正房",
@@ -71,5 +71,6 @@ if __name__ == "__main__":
         },
     }
 
-    form = FormInferencer(data)
+    form = FormInferencer(test_building_data)
     print(form.infer_form_name())
+    print(form.building_data)

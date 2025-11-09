@@ -1,27 +1,32 @@
-from pathlib import Path
 import tomllib
-
+from pathlib import Path
 
 class ConfigManager:
-    def __init__(self):
-        self.config_dir = Path("configs")
+    def __init__(self, config_path: str = "configs/base_config.toml"):
+        self.config_path = Path(config_path)
         self.config = {}
-        self._load_all_configs()
+        self.load_config()
 
-    def _load_all_configs(self):
-        for file in self.config_dir.glob("*.toml"):
-            name = file.stem
-            with open(file, "rb") as f:
-                self.config[name] = tomllib.load(f)
+    def load_config(self):
+        with open(self.config_path, "rb") as f:
+            self.config = tomllib.load(f)
 
-            # 临时测试可删除
-            import json
-            with open ("configs/data_json.json", "w", encoding="utf-8") as f:
-                json.dump(self.config, f)
+    def get(self, section: str, key: str, default=None):
+        """通用访问接口"""
+        return self.config.get(section, {}).get(key, default)
 
+    @property
+    def paths(self):
+        return self.config.get("paths", {})
 
-if __name__ == "__main__":
-    config_manager = ConfigManager()
-    print(config_manager.config)
+    @property
+    def system(self):
+        return self.config.get("system", {})
 
-    
+    @property
+    def modeling(self):
+        return self.config.get("modeling", {})
+
+    @property
+    def output(self):
+        return self.config.get("output", {})

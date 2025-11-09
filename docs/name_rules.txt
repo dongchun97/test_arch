@@ -1,0 +1,123 @@
+命名规范建议
+
+1. 配置数据 (TOML/JSON)
+————————————————————————————————————————————————————————
+# 文件配置
+toml_config = toml.load("config.toml")
+json_mapping = json.load("mapping.json")
+
+# 分类配置
+building_config = config_manager.load_building_config()
+geometry_config = config_manager.load_geometries()
+material_config = config_manager.load_materials()
+
+# 合并配置
+merged_config = {**base_config, **override_config}
+complete_config = config_manager.get_complete_config()
+
+2. CSV源数据
+————————————————————————————————————————————————————————
+# 原始数据
+raw_csv_data = np.genfromtxt("data.csv")
+csv_records = loader.load_csv()
+source_data = pd.read_csv("data.csv")
+
+# 解析后的数据
+parsed_building = data_parser.parse_row(row)
+extracted_info = data_extractor.process(raw_data)
+
+3. 结构化建筑数据
+————————————————————————————————————————————————————————
+# 从CSV解析的建筑信息
+building_info = data_loader.get_building_info(row_index)
+arch_data = architecture_data['basic_info']
+structure_spec = building_data['structure_info']
+dimension_spec = building_data['dimension_info']
+
+# 分类数据
+category_data = building_data['category_info']
+spatial_data = building_data['spatial_info']
+metadata = building_data['metadata']
+
+
+4. 计算中间数据
+————————————————————————————————————————————————————————
+# 计算参数
+calc_params = calculator.get_parameters()
+derived_values = calculator.calculate_derived()
+intermediate_results = calculator.get_intermediates()
+
+# 构件数据
+component_specs = calculator.get_component_specs()
+pillar_data = calculator.calculate_pillars()
+beam_data = calculator.calculate_beams()
+
+
+5. 规则和映射数据
+————————————————————————————————————————————————————————
+# 规则数据
+rule_set = rule_engine.rules
+mapping_rules = mapping_manager.mappings
+validation_rules = validator.get_rules()
+
+# 类映射
+class_mapping = config_manager.get_class_mapping()
+type_registry = registry.get_type_mapping()
+
+6. 数据库数据
+————————————————————————————————————————————————————————
+# 查询结果
+db_records = database.query_buildings()
+query_results = db_session.execute(query)
+entity_data = orm_model.to_dict()
+
+# 持久化数据
+persisted_data = repository.save(building_entity)
+stored_config = config_repo.get_by_name(name)
+
+命名模式总结
+————————————————————————————————————————————————————————
+_config      # 配置数据
+_spec        # 规格说明
+_info        # 信息数据
+_params      # 参数数据
+_rules       # 规则数据
+_mapping     # 映射数据
+_records     # 记录数据
+_results     # 计算结果
+_data        # 通用数据（谨慎使用）
+
+raw_         # 原始数据
+parsed_      # 解析后数据
+processed_   # 处理后的数据
+calculated_  # 计算得到的数据
+merged_      # 合并的数据
+cached_      # 缓存的数据
+
+路径命名模式总结
+————————————————————————————————————————————————————————
+常用后缀
+_path        # 通用路径（文件或目录）
+_file        # 明确是文件
+_dir         # 明确是目录
+_url         # 网络路径或数据库URL
+_location    # 存储位置
+
+功能前缀
+input_       # 输入路径
+output_      # 输出路径
+source_      # 源文件路径
+target_      # 目标文件路径
+template_    # 模板路径
+export_      # 导出路径
+temp_        # 临时路径
+backup_      # 备份路径
+
+类型前缀
+csv_         # CSV文件
+json_        # JSON文件
+toml_        # TOML文件
+blend_       # Blender文件
+db_          # 数据库文件
+log_         # 日志文件
+

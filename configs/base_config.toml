@@ -5,8 +5,29 @@ version = "1.0.0"
 scale = 100
 unit = "meter"
 
-# [generation]
-# precision_high_level = 32
-# precision_medium_level = 16
-# precision_low_level = 8
-# precision_draft_level = 4
+[paths]
+data_dir = "data/"
+rule_dir = "configs/rules/"
+output_dir = "output/"
+logs_dir = "logs/"
+cache_dir = "cache/"
+
+
+[production]
+mode = "development"      
+log_level = "INFO"
+parallel = true           # 是否开启多线程或多进程
+
+
+[modeling]
+default_unit = "meters"
+scale = 100
+precision = 1e-4
+default_style = "small_style"
+
+[output]
+export_format = "blend"       # 或 "fbx", "gltf"
+include_metadata = true
+timestamp_naming = true
+
+

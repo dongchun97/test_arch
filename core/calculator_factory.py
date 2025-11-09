@@ -10,7 +10,8 @@ class CalculatorFactory:
 
     def create(self, category: str):
         """根据规则表（rules.json）动态创建计算器实例"""
-        rule = self.rule_manager.get_rule(category)
+        rule = self.rule_manager.get_rule_class_from_json(category)
+
         if not rule:
             raise ValueError(f"未定义类别对应规则：{category}")
 
@@ -38,3 +39,19 @@ class CalculatorFactory:
             rule_manager=self.rule_manager, config_file=config_file
         )
         return calculator
+
+if __name__ == "__main__":
+
+    from pathlib import Path
+    import sys
+    p=Path.cwd()
+    sys.path.append(Path.cwd())
+    print(sys.path)
+
+    from configs import RuleManager
+    # rule_manager = RuleManager()
+
+    # calc_factory=CalculatorFactory(rule_manager)
+    # calculator=calc_factory.create("房屋")
+
+    # print(calculator)

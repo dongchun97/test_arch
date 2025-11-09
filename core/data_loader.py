@@ -90,31 +90,11 @@ class DimensionInfoFormatter(BaseFormatter):
         depth_total = np.array(self._get_value(row, "通进深", True))
         eave_step = np.array(self._get_value(row, "檐步架", True))
 
-        # # 檩数计算
-        # num_purlins = int(depth_total // eave_step) + 2
-        # if num_purlins == 8:
-        #     purlin_name = "八檩"
-        # elif num_purlins == 7:
-        #     purlin_name = "七檩"
-        # elif num_purlins == 6:
-        #     purlin_name = "六檩"
-        # elif num_purlins == 5:
-        #     purlin_name = "五檩"
-        # else:
-        #     purlin_name = "四檩"
-
-        # # 结构名称
-        # ridge_types = self._get_value(row, "屋脊类型")
-        # construction_grades = self._get_value(row, "建筑等级")
-        # # structure_name = f"{purlin_name}{ridge_types}{construction_grades}"
-
         return {
-            # "num_lin": num_purlins,
             "num_bays": bays,
             "bay_widths": bay_widths,
             "depth_total": depth_total,
             "eave_step": eave_step,
-            # "structure_name": structure_name,
         }
 
 
@@ -126,8 +106,8 @@ class DataLoader:
     3. 支持批量数据获取
     """
 
-    def __init__(self, path: str):
-        self.path = path
+    def __init__(self, raw_csv_path: str):
+        self.raw_csv_path = raw_csv_path
         self.headers = []
         self.raw_data = None
         self._formatters = {}
@@ -151,7 +131,7 @@ class DataLoader:
     def _load_raw_data(self):
         """加载原始CSV数据"""
         self.raw_data = np.genfromtxt(
-            self.path, delimiter=",", dtype=str, encoding="utf-8"
+            self.raw_csv_path, delimiter=",", dtype=str, encoding="utf-8"
         )
         self.headers = self.raw_data[0, :].tolist()
 
