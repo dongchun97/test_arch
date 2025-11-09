@@ -90,26 +90,26 @@ class DimensionInfoFormatter(BaseFormatter):
         depth_total = np.array(self._get_value(row, "通进深", True))
         eave_step = np.array(self._get_value(row, "檐步架", True))
 
-        # 檩数计算
-        num_purlins = int(depth_total // eave_step) + 2
-        if num_purlins == 8:
-            purlin_name = "八檩"
-        elif num_purlins == 7:
-            purlin_name = "七檩"
-        elif num_purlins == 6:
-            purlin_name = "六檩"
-        elif num_purlins == 5:
-            purlin_name = "五檩"
-        else:
-            purlin_name = "四檩"
+        # # 檩数计算
+        # num_purlins = int(depth_total // eave_step) + 2
+        # if num_purlins == 8:
+        #     purlin_name = "八檩"
+        # elif num_purlins == 7:
+        #     purlin_name = "七檩"
+        # elif num_purlins == 6:
+        #     purlin_name = "六檩"
+        # elif num_purlins == 5:
+        #     purlin_name = "五檩"
+        # else:
+        #     purlin_name = "四檩"
 
-        # 结构名称
-        ridge_types = self._get_value(row, "屋脊类型")
-        construction_grades = self._get_value(row, "建筑等级")
-        # structure_name = f"{purlin_name}{ridge_types}{construction_grades}"
+        # # 结构名称
+        # ridge_types = self._get_value(row, "屋脊类型")
+        # construction_grades = self._get_value(row, "建筑等级")
+        # # structure_name = f"{purlin_name}{ridge_types}{construction_grades}"
 
         return {
-            "num_lin": num_purlins,
+            # "num_lin": num_purlins,
             "num_bays": bays,
             "bay_widths": bay_widths,
             "depth_total": depth_total,

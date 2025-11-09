@@ -1,0 +1,18 @@
+[building_subtypes]
+
+[building_subtypes.main]
+description = "正房"
+inherit = ["construction_grades.large_style"]
+orientation = "south"
+
+
+[building_subtypes.wing]
+description = "厢房"
+inherit = ["construction_grades.small_style"]
+orientation = "east_west"
+
+
+[building_subtypes.reverse]
+description = "倒座房"
+inherit = ["construction_grades.small_style"]
+orientation = "north"

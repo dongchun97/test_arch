@@ -4,14 +4,14 @@ from copy import deepcopy
 
 
 class RuleManager:
-    def __init__(self, rules_dir: Path):
-        self.rules_dir = rules_dir
+    def __init__(self, rules_path: str):
+        self.rules_path = Path(rules_path)
         self.rules = {}
         self.load_rules()
 
     def load_rules(self):
         """递归读取 rules 目录下所有 TOML 文件"""
-        for path in self.rules_dir.glob("*.toml"):
+        for path in self.rules_path.glob("*.toml"):
             with open(path, "rb") as f:
                 data = tomllib.load(f)
                 self.rules[path.stem] = data
@@ -65,9 +65,16 @@ class RuleManager:
 
 
 if __name__ == "__main__":
-    rm = RuleManager(Path("configs/rules"))
+    rule_path = "configs/rules"
+    rm = RuleManager(rule_path)
+    print(rm.rules)
 
     form_rule = rm.get_form("四檩卷棚小式")
+
+    import json
+
+    with open("configs/data_json.json", "w", encoding="utf-8") as f:
+        json.dump(form_rule, f)
 
     for k, v in form_rule.items():
         print(f"{k}: {v}")

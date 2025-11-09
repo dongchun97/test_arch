@@ -6,5 +6,9 @@
     "亭": {
         "calculator_class": "PavilionCalculator",
         "config_file": "pavilion_config.toml"
+    },
+    "楼": {
+        "calculator_class": "TowerCalculator",
+        "config_file": "tower_config.toml"
     }
 }
