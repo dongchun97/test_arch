@@ -1,6 +1,6 @@
 测试模块
 building_form.toml
-rule_manager.py
+config_manager.py
 
 building_forms          建筑形态定义
 construction_grades     等级

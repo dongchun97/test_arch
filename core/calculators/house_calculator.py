@@ -1,49 +1,80 @@
 # core/calculators/house_calculator.py
 from .base_calculator import BaseCalculator
+import numpy as np
+from typing import Dict, Any, List
 
 
 class HouseCalculator(BaseCalculator):
-    """
-    房屋类建筑计算器：根据檩数、屋顶形式、等级制度计算主要尺寸。
-    """
+    """房屋计算器 - 处理正房、厢房等"""
 
-    def compute(self, form_name: str) -> dict:
-        # 读取综合规则（形态+等级+屋顶等）
-        rule = self.rule_manager.get_form(form_name)
+    def calculate_pillars(self) -> Dict[str, Any]:
+        """计算房屋柱子系统"""
+        bay_widths = self.building_data.get("bay_widths", [3.0, 2.8, 2.8, 3.0])
+        pillar_config = self.style_config.get("pillars", {})
 
-        # 应用 modular_system 调整
-        rule = self._apply_modular_system(rule)
+        # 计算檐柱
+        eave_pillar = pillar_config.get("eave", {})
+        pillar_diameter = (
+            eave_pillar.get("diameter_ratio", 0.077) * bay_widths[0]
+        )  # 明间面阔比例
+        pillar_height = eave_pillar.get("height_ratio", 0.8) * pillar_diameter
 
-        # 计算构件比例
-        structure_params = self._calculate_structure(rule)
-        roof_params = self._calculate_roof(rule)
+        pillars = []
+        x_pos = 0
+        for i, width in enumerate(bay_widths):
+            pillars.append(
+                {
+                    "type": "eave_pillar",
+                    "position": [x_pos + width / 2, 0, 0],
+                    "diameter": pillar_diameter,
+                    "height": pillar_height,
+                    "role": self._get_pillar_role(i, len(bay_widths)),
+                }
+            )
+            x_pos += width
 
         return {
-            "form_name": form_name,
-            "modular_system": rule.get("modular_system"),
-            **structure_params,
-            **roof_params,
+            "pillars": pillars,
+            "eave_pillar_diameter": pillar_diameter,
+            "eave_pillar_height": pillar_height,
         }
 
-    def _calculate_structure(self, rule: dict) -> dict:
-        """计算柱、梁等尺寸"""
-        num_purlins = rule.get("num_purlins", 5)
-        modular_scale = rule.get("modular_scale", 0.15)
-        beam_span = self._scale_value(num_purlins * modular_scale * 10)
+    def calculate_beams(self) -> Dict[str, Any]:
+        """计算房屋梁系统"""
+        beam_config = self.style_config.get("beams", {})
+        purlin_count = self.building_data.get("purlin_count", 4)
 
+        beams = []
+        if purlin_count == 4:
+            # 四檩卷棚梁架
+            beams.extend(self._calculate_four_purlin_beams())
+        elif purlin_count == 5:
+            # 五檩梁架
+            beams.extend(self._calculate_five_purlin_beams())
+
+        return {"beams": beams}
+
+    def calculate_roof(self) -> Dict[str, Any]:
+        """计算房屋屋顶"""
+        roof_config = self.style_config.get("roof", {})
         return {
-            "num_purlins": num_purlins,
-            "beam_span": beam_span,
-            "pillar_height": self._scale_value(modular_scale * 8),
+            "type": roof_config.get("type", "roll_shed"),
+            "slope_ratio": roof_config.get("slope_ratio", 0.5),
+            "overhang": roof_config.get("overhang", 0.3),
         }
 
-    def _calculate_roof(self, rule: dict) -> dict:
-        """根据屋顶类型计算高度与倾角"""
-        roof_type = rule.get("roof_type", "roll_shed")
-        if roof_type == "roll_shed":
-            pitch = 18
-        elif roof_type == "hard_mountain":
-            pitch = 25
+    def _get_pillar_role(self, index: int, total: int) -> str:
+        """获取柱子角色"""
+        if index == 0 or index == total - 1:
+            return "corner_pillar"
+        elif index == total // 2:
+            return "center_pillar"
         else:
-            pitch = 20
-        return {"roof_type": roof_type, "roof_pitch": pitch}
+            return "intermediate_pillar"
+
+    def _calculate_four_purlin_beams(self) -> List[Dict]:
+        """计算四檩梁架"""
+        return [
+            {"type": "eave_beam", "section": [0.2, 0.3], "position": [0, 0, 2.5]},
+            {"type": "ridge_beam", "section": [0.18, 0.25], "position": [0, 0, 3.2]},
+        ]

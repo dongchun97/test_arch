@@ -1,0 +1,32 @@
+{
+    "房屋": {
+        "calculator_class": "HouseCalculator",
+        "config_file": "houses/main_house.toml",
+        "description": "房屋类建筑计算器"
+    },
+    "正房": {
+        "calculator_class": "HouseCalculator",
+        "config_file": "houses/main_house.toml",
+        "description": "正房建筑计算器"
+    },
+    "厢房": {
+        "calculator_class": "HouseCalculator",
+        "config_file": "houses/side_house.toml",
+        "description": "厢房建筑计算器"
+    },
+    "四角亭": {
+        "calculator_class": "PavilionCalculator",
+        "config_file": "pavilions/square_pavilion.toml",
+        "description": "四角亭计算器"
+    },
+    "六角亭": {
+        "calculator_class": "PavilionCalculator",
+        "config_file": "pavilions/hexagonal_pavilion.toml",
+        "description": "六角亭计算器"
+    },
+    "楼阁": {
+        "calculator_class": "TowerCalculator",
+        "config_file": "towers/main_tower.toml",
+        "description": "楼阁建筑计算器"
+    }
+}

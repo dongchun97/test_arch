@@ -1,4 +1,9 @@
 [building_form]
+"硬山" = "hard_hill"
+"悬山" = "hanging_hill"
+"歇山" = "hip_roof"
+"庑殿" = "hip_roof_palace"
+"攒尖" = "pyramidal_roof"
 
 # 继承
 [building_form."四檩卷棚小式"]
