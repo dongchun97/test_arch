@@ -98,6 +98,7 @@ class RuleManager:
         self._load_toml_rules()
 
 
+#  统一调用RuleManager和ClassRegistry方法
 class ConfigManager:
     def __init__(
         self,

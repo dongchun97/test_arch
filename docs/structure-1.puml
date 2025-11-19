@@ -1,42 +1,186 @@
 @startuml
+title test_arch Project - Full UML Class Diagram
 
-package "Main Layer" {
-  class Main {
-    + main()
-  }
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #3C3C3C
+skinparam ClassBorderColor #333
+skinparam ClassBackgroundColor #EEE
+skinparam RectangleBackgroundColor #F8F8F8
+skinparam Shadowing false
+
+
+' ==========================
+' CONFIG LAYER
+' ==========================
+
+package "configs (Configuration Layer)" {
+
+class ConfigManager {
+    - rules_dir: Path
+    + load_all_rules()
+    + load_toml()
 }
 
-package "Generator Layer" {
-  class Generator {
-    - data_loader
-    - config_loader
-    - calculator
-    + run(row)
-  }
+class ConfigLoader {
+    + load_structure(name)
+    + load_roof_types()
+    + load_grades()
 }
 
-package "Core Layer" {
-  class DataLoader
-  class ConfigLoader
-  class CalculatorFactory
-  class ComponentCalculator
+class BaseConfigToml <<TomlFile>>
+class RoofTypesToml <<TomlFile>>
+class ConstructionGradesToml <<TomlFile>>
+class BuildingFormsToml <<TomlFile>>
+class StructuralModulesToml <<TomlFile>>
+
+class ClassMappingJson <<JsonFile>>
+
+ConfigLoader --> ConfigManager : dependency
+ClassMappingJson --> ConfigLoader : association
 }
 
-package "Structure Layer" {
-  class Components
-  class Frame
-  class Assembler
-  class Utils
+
+' ==========================
+' DATA LAYER
+' ==========================
+
+package "data (Data Layer)" {
+
+class DataLoader {
+    + load_csv()
+    + parse_basic_info()
+    + parse_category_info()
+    + parse_dimension_info()
+}
+DataLoader --> ConfigLoader : dependency
 }
 
-Main --> Generator : 调用生成器
-Generator --> DataLoader : 加载原始数据
-Generator --> ConfigLoader : 加载配置
-Generator --> CalculatorFactory : 获取计算类
-CalculatorFactory --> ComponentCalculator : 创建子类实例
-Generator --> Components : 创建构件
-Generator --> Frame : 生成结构系统
-Generator --> Assembler : 组合建筑
-Assembler --> Utils : 集合与mesh池管理
+
+' ==========================
+' CORE LAYER (LOGIC)
+' ==========================
+
+package "core (Logic Layer)" {
+
+class FormInferencer {
+    + infer_structure()
+    + infer_num_purlins()
+    + infer_category()
+}
+
+FormInferencer --> DataLoader : dependency
+FormInferencer --> ConfigLoader : dependency
+
+class CalculatorFactory {
+    + register(type, class)
+    + get_calculator(type)
+}
+
+CalculatorFactory --> ClassMappingJson : association
+
+
+' ---- calculators ----
+
+class BaseCalculator <<abstract>> {
+    + compute_pillars()
+    + compute_beams()
+    + compute_roof()
+}
+
+class HouseCalculator {
+    + compute_pillars()
+    + compute_beams()
+    + compute_roof()
+}
+
+class PavilionCalculator {
+    + compute_pillars()
+    + compute_beams()
+    + compute_roof()
+}
+
+BaseCalculator <|-- HouseCalculator : generalization
+BaseCalculator <|-- PavilionCalculator : generalization
+
+CalculatorFactory --> BaseCalculator : dependency
+}
+
+
+' ==========================
+' STRUCTURE LAYER (MODELING)
+' ==========================
+
+package "structure (Modeling Layer)" {
+
+package "components" {
+class ComponentPillar {
+    + create_mesh()
+}
+class ComponentBeam {
+    + create_mesh()
+}
+class ComponentRoof {
+    + create_mesh()
+}
+}
+
+package "frame" {
+
+class PillarFrame {
+    - coords[]
+    + build_pillars()
+}
+class BeamFrame {
+    - coords[]
+    + build_beams()
+}
+class RoofSystem {
+    + build_roof()
+}
+
+' Composition (components belong to frame)
+PillarFrame *-- ComponentPillar : composition
+BeamFrame *-- ComponentBeam : composition
+RoofSystem *-- ComponentRoof : composition
+}
+
+class Assembler {
+    + assemble_all()
+    + link_to_scene()
+}
+
+' Aggregation (assembler aggregates frames)
+Assembler o-- PillarFrame : aggregation
+Assembler o-- BeamFrame : aggregation
+Assembler o-- RoofSystem : aggregation
+
+class MeshPool {
+    + get_or_create_mesh()
+}
+
+Assembler --> MeshPool : dependency
+}
+
+
+' ==========================
+' APPLICATION LAYER
+' ==========================
+
+package "Application Layer" {
+
+class Generator {
+    + run()
+}
+
+class Main <<entrypoint>>
+
+Main --> Generator : dependency
+
+Generator --> DataLoader : dependency
+Generator --> FormInferencer : dependency
+Generator --> CalculatorFactory : dependency
+Generator --> Assembler : dependency
+}
+
 
 @enduml

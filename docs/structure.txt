@@ -2,7 +2,8 @@ test_arch/
 │
 ├── configs/
 │   ├── __init__.py
-│   ├── rule_manager.py                # 负责所有规则加载（形态、屋顶、等级）
+│   ├── config_manager.py                # 负责所有规则加载（形态、屋顶、等级）
+│   ├── class_mapping.json               # 类型映射
 │   └── rules/
 │       ├── base_config.toml           # 系统级配置（单位、比例、输出路径）
 │       ├── construction_grades.toml   # 建筑等级制
@@ -15,19 +16,19 @@ test_arch/
 │ 
 ├── core/
 │    ├── __init__.py
-│    ├── data_loader.py                 #数据加载器，初步结构化数据，返回basic_info、structure_info、description_info、dimension_info、structure_name
+│    ├── data_loader.py                 #数据加载器，初步结构化数据，返回basic_info、category_info、dimension_info
 │    ├── config_loader.py               #配置加载器，输入structure_name，查找configs对应的配置信息（预设信息、建筑信息）
-│    ├── calculator_factory.py           #决定“实例化谁”,根据类别分发计算器；
-│    ├── component_calculator.py        #决定“怎么算”；数据计算，输入dimension_info，输出eave_diameter、eave_height、num_purlins、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
+│    ├── form_inferencer.py           # data_loader输出和calculator之间的衔接，推断内容，包括num_purlins、structure_name
+│    ├── calculator_factory.py        #决定“实例化谁”,根据类别分发计算器；
 │    └── calculators/
 │         ├── __init__.py
-│         ├── base_calculator.py
+│         ├── base_calculator.py    #决定“怎么算”；数据计算，输入dimension_info，输出eave_diameter、eave_height、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
 │         ├── house_calculator.py
 │         └── pavilion_calculator.py
 │
 ├── structure/
-│   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、structure_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建
-│   ├── assembler.py           # 输入主要标高信息和构件网格对象，组合功能创建组合，输入description_info（含 placement 功能 ）判断正房、厢房、倒座房
+│   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、category_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建
+│   ├── assembler.py           # 输入主要标高信息和构件网格对象，组合功能创建组合
 │   ├── frame/                #改名为 frame,与子模块统一名称
 │   │   ├── pillar_frame.py       # 改名为pillar_frame，统一名称，输入pillars_coords、components对象，遍历位置创建柱网
 │   │   ├── beam_frame.py

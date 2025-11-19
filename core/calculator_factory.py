@@ -66,15 +66,8 @@ class CalculatorFactory:
 
     def _import_calculator_class(self, class_name: str) -> Type[BaseCalculator]:
         """动态导入计算器类"""
-        try:
-            module = importlib.import_module(f"core.calculators.{class_name.lower()}")
-            return getattr(module, class_name)
-        except (ImportError, AttributeError) as e:
-            # 回退到默认计算器
-            print(f"警告: 无法导入计算器类 {class_name}, 使用默认计算器: {e}")
-            from .calculators.house_calculator import HouseCalculator
-
-            return HouseCalculator
+        module = importlib.import_module(f"core.calculators.{class_name.lower()}")
+        return getattr(module, class_name)
 
     def _prepare_building_config(
         self, building_data: Dict[str, Any], dedicated_config: Dict[str, Any]

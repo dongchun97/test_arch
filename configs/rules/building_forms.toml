@@ -24,3 +24,12 @@ inherit = [
 ]
 purlin_count = 5
 description = "五檩歇山大式建筑，为中式厅堂常见构架。"
+
+[building_form."六檩卷棚大式"]
+inherit = [
+    "roof_types.xie_shan",
+    "construction_grades.large_style",
+    "structural_modules.column_diameter_system",
+]
+purlin_count = 5
+description = "测试柳林卷棚大式。"
