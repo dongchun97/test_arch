@@ -1,78 +1,40 @@
-# structure/assembler.py
-from structure.systems.pillar_frame import PillarNetSystem
+# -----------------------------------------------------------------------------
+# file: structure/assembler.py
+# -----------------------------------------------------------------------------
+from typing import Dict, Any
+from structure.utils import ensure_collection
+from structure.frames import build_pillar_frame
+from structure.frames import build_beam_frame
+from structure.frames import build_roof_system
 
-# from structure.systems.beam_frame import BeamFrameSystem
-# from structure.systems.roof_system import RoofSystem
-# from structure.systems.wall_system import WallSystem
-# from structure.collection import CollectionManager
-# from structure.placement import PlacementManager
 
-
-class Assembler:
+def assemble_building(calc_result, components_objs: Dict[str, object], description_info: Dict[str, Any], name: str = None):
+    """主组合函数：将 components 放置并按照 description_info 进行排列。
+    calc_result: ComponentCalcResult 或 dict-like
+    components_objs: {'pillar': obj, 'beam': obj, 'roof': obj}
+    description_info: placement info
+    name: collection name
     """
-    负责整个建筑构件系统的装配协调。
-    - 读取 FrameGeometryCalculator 输出的几何信息
-    - 调用各系统（柱网、梁架、屋顶、山墙）生成模型对象
-    - 管理集合与层级结构
-    """
+    collection_name = name or description_info.get('name') or 'building'
+    coll = ensure_collection(collection_name)
 
-    def __init__(self, calc_result):
-        self.calc_result = calc_result
-        # self.collection = CollectionManager()
-        # self.placement = PlacementManager()
+    # 放置柱
+    pillars = getattr(calc_result, 'pillars', None) or calc_result.get('pillars')
+    beams = getattr(calc_result, 'beams', None) or calc_result.get('beams')
+    roof = getattr(calc_result, 'roof', None) or calc_result.get('roof')
 
-        # 系统实例
-        self.pillar_net = None
-        self.beam_frame = None
-        self.roof_system = None
-        self.wall_system = None
+    pillar_proto = components_objs['pillar']
+    beam_proto = components_objs['beam']
+    roof_proto = components_objs['roof']
 
-    # -------------------- 系统生成流程 -------------------- #
-    def build_pillar_net(self):
-        self.pillar_net = PillarNetSystem(self.calc_result["pillars"])
-        self.pillar_net.generate()
-        self.collection.add("柱网系统", self.pillar_net.objects)
+    created_pillars = build_pillar_frame(pillars, pillar_proto, coll)
+    created_beams = build_beam_frame(beams, beam_proto, coll)
+    created_roof = build_roof_system(roof, roof_proto, coll)
 
-    # def build_beam_frame(self):
-    #     self.beam_frame = BeamFrameSystem(self.calc_result["beams"])
-    #     self.beam_frame.generate()
-    #     self.collection.add("梁架系统", self.beam_frame.objects)
-
-    # def build_roof_system(self):
-    #     self.roof_system = RoofSystem(self.calc_result)
-    #     self.roof_system.generate()
-    #     self.collection.add("屋顶系统", self.roof_system.objects)
-
-    # def build_wall_system(self):
-    #     self.wall_system = WallSystem(self.calc_result)
-    #     self.wall_system.generate()
-    #     self.collection.add("山墙系统", self.wall_system.objects)
-
-    # -------------------- 主控制流程 -------------------- #
-    def assemble_all(self):
-        # """
-        # 执行完整装配流程（按层次生成）
-        # """
-        # self.build_pillar_net()
-        # self.build_beam_frame()
-        # self.build_roof_system()
-        # self.build_wall_system()
-
-        # # 父子关系与位置
-        # self.placement.link(self.pillar_net, self.beam_frame)
-        # self.placement.link(self.beam_frame, self.roof_system)
-        # self.placement.link(self.pillar_net, self.wall_system)
-
-        # print("✅ 所有系统已装配完成。")
-        # return self.collection
-        return "test"
-
-
-if __name__ == "__main__":
-    import sys, pathlib
-
-    sys.path.append(str(pathlib.Path(__file__).parent.parent))
-    from structure.systems.pillar_frame import PillarNetSystem
-
-    assembl = Assembler()
-    assembl.build_pillar_net()
+    # TODO: 根据 description_info 做更复杂的偏移、旋转和合并
+    return {
+        'collection': coll,
+        'pillars': created_pillars,
+        'beams': created_beams,
+        'roof': created_roof,
+    }

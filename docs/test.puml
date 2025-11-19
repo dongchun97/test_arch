@@ -1,0 +1,5 @@
+@startuml 'test'
+class MyClass {
+  +void myMethod()
+}
+@enduml

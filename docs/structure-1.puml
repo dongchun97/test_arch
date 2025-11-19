@@ -10,6 +10,21 @@ skinparam Shadowing false
 
 
 ' ==========================
+' DATA LAYER
+' ==========================
+
+package "data (Data Layer)"<<Database>> {
+
+class DataLoader {
+    + load_csv()
+    + parse_basic_info()
+    + parse_category_info()
+    + parse_dimension_info()
+}
+DataLoader --> ConfigLoader : dependency
+}
+
+' ==========================
 ' CONFIG LAYER
 ' ==========================
 
@@ -37,22 +52,6 @@ class ClassMappingJson <<JsonFile>>
 
 ConfigLoader --> ConfigManager : dependency
 ClassMappingJson --> ConfigLoader : association
-}
-
-
-' ==========================
-' DATA LAYER
-' ==========================
-
-package "data (Data Layer)" {
-
-class DataLoader {
-    + load_csv()
-    + parse_basic_info()
-    + parse_category_info()
-    + parse_dimension_info()
-}
-DataLoader --> ConfigLoader : dependency
 }
 
 

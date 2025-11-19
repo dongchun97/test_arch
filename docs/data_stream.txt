@@ -1,0 +1,42 @@
+模块	                    输入数据	                                来源
+utils	                    basic_info, structure_info, mesh_key	    data_loader / config_manager
+components/pillar	        eave_diameter, eave_height	                component_calculator
+components/beam	            beam_size, length, elevation	            component_calculator
+components/roof	            num_purlins, ridge_distance	                component_calculator
+frame/pillar_frame	        pillars_coords, pillar_obj	                component_calculator + components
+frame/beam_frame	        beams_coords, beam_obj	同上
+frame/roof_system	        roof_params, roof_obj	同上
+assembler	                所有 coordinates + components + description_info + collection	上层所有模块
+
+data_loader
+    ↓
+form_inferencer
+    ↓
+config_manager
+    ↓
+calculator_factory → calculators/*
+    ↓
+structure/*（utils → components → frame → assembler）
+    ↓
+generator.py
+
+
+
+{
+    "basic_info": {'garden_name': 'CC', 'garden_id': 'W01L_ABC', 'building_id': '10', 'building_name': '松篁深处'},
+    'category_info': {'building_category': '房屋', 'sub_category': '正房', 'roof_forms': '歇山', 'ridge_types': '卷棚', 'construction_grades': '大式', 'corridor': '无廊'}, 
+    "structure_info": {...},
+    "description_info": {...},
+    "components_objs": {
+        "pillar": pillar_obj,
+        "beam": beam_obj,
+        "roof": roof_obj
+    },
+    "coordinates": {
+        "pillars_coords": [...],
+        "beams_coords": [...],
+        "roof_coords": [...]
+    },
+    "levels": {...},
+    "collection": main_building_collection
+}

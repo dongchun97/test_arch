@@ -20,11 +20,21 @@ test_arch/
 │    ├── config_loader.py               #配置加载器，输入structure_name，查找configs对应的配置信息（预设信息、建筑信息）
 │    ├── form_inferencer.py           # data_loader输出和calculator之间的衔接，推断内容，包括num_purlins、structure_name
 │    ├── calculator_factory.py        #决定“实例化谁”,根据类别分发计算器；
+│    │
 │    └── calculators/
-│         ├── __init__.py
-│         ├── base_calculator.py    #决定“怎么算”；数据计算，输入dimension_info，输出eave_diameter、eave_height、ridge_distance、x_grid、y_grid、pillars_coords、beams_coords、主要标高信息等建模需要的关键信息
-│         ├── house_calculator.py
-│         └── pavilion_calculator.py
+│           ├── __init__.py
+│           │
+│           ├── base_calculator.py                   # 所有 calculator 共同基类，柱网计算、举架系统计算
+│           │
+│           ├── roof_forms/
+│           │     ├── xieshan_calculator.py   # 歇山
+│           │     ├── yingshan_calculator.py# 硬山
+│           │     ├── wudian_calculator.py    # 庑殿
+│           │     ├── xuanshan_calculator.py  # 悬山
+│           │     └── cuanjian_calculator.py     # 攒尖
+│           │
+│           └── components.py                        # 构件级 calculator，包含Column、Beam、Purlin等构件计算类，所有构件计算遵循统一接口 BaseComponentCalculator
+│
 │
 ├── structure/
 │   ├── utils.py                # 含mesh_pool和collection_init功能，输入basic_info、category_info，初始化集合，以及检查创建的mesh对象，如果bpy.data.meshes中有则返回，没有则创建

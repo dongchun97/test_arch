@@ -206,7 +206,7 @@ if __name__ == "__main__":
     # print(dimension_info)
 
     # # 方式2：获取完整建筑数据
-    complete_data = loader.get_complete_building_data(0)
+    complete_data = loader.get_complete_building_data(1)
     print(complete_data)
     # print(complete_data["basic_info"]["building_name"])
     # print(complete_data["dimension_info"]["structure_name"])

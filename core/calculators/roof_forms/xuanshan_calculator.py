@@ -1,0 +1,2 @@
+class XuanshanCalculator:
+    print("XuanshanCalculator")

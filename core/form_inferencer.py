@@ -6,13 +6,13 @@ class FormInferencer:
     """
     推断建筑形态信息：
     1. infer_num_lin() — 根据檐步和进深计算檩数、脊距
-    2. infer_form_name() — 根据 ridge_type + grade + 檩数 生成形态名
+    2. _infer_form_name() — 根据 ridge_type + grade + 檩数 生成形态名
     """
 
     def __init__(self, building_data: Dict):
         self.building_data = building_data
 
-        self._infer_num_lin()
+        self._run()
 
     def _infer_num_lin(self):
         """
@@ -32,7 +32,7 @@ class FormInferencer:
 
         return num_lin
 
-    def infer_form_name(self):
+    def _infer_form_name(self):
         """
         组合形态名，例如 “六檩卷棚大式”
         """
@@ -50,6 +50,15 @@ class FormInferencer:
         cn_map = {3: "三", 4: "四", 5: "五", 6: "六", 7: "七", 8: "八"}
         return cn_map.get(num, str(num))
 
+    
+    def _run(self):
+        """完整推断流程，写回 building_data 并返回"""
+        self._infer_num_lin()
+
+        form_name = self._infer_form_name()
+        self.building_data["category_info"]["form_name"] = form_name
+
+        return self.building_data
 
 if __name__ == "__main__":
     from numpy import array
@@ -72,5 +81,5 @@ if __name__ == "__main__":
     }
 
     form = FormInferencer(test_building_data)
-    print(form.infer_form_name())
+    print(form._infer_form_name())
     print(form.building_data)

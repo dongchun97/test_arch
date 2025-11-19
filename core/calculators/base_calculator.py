@@ -1,44 +1,48 @@
-from abc import ABC, abstractmethod
-from typing import Dict, Any, List
-from configs import ConfigManager
+# calculators/base_calculator.py
 
+class BaseCalculator:
 
-class BaseCalculator(ABC):
-    """计算器基类 - 定义统一接口"""
+    def __init__(self, config):
+        self.config = config
 
-    def __init__(self, building_data: Dict, config_manager: ConfigManager):
-        self.building_data = building_data
-        self.config_manager = config_manager
+    # ------ 公共计算：柱网（基础结构） ------
+    def compute_grid(self, dimension_info):
+        num_bays = dimension_info["num_bays"]
+        bay_widths = dimension_info["bay_widths"]
 
-    def load_configmanager(self, form_name: str):
-        """加载某一建筑形态的完整规则"""
-        self.config_manager = self.config_manager.get_building_form(form_name)
+        x_coords = [0]
+        for w in bay_widths:
+            x_coords.append(x_coords[-1] + w)
 
-    def validate_inputs(self):
-        """统一输入接口校验"""
-        pass
-
-    @abstractmethod
-    def compute_basic_grid(self):
-        """
-        通用柱网基础信息：
-        - num_bays
-        - bay_widths
-        - depth_total
-        - eave_step
-        """
-        info = self.data["dimension_info"]
-        return {
-            "num_bays": info["num_bays"],
-            "bay_widths": info["bay_widths"],
-            "depth_total": info["depth_total"],
-            "eave_step": info["eave_step"],
+        # 输出柱位矩阵（可扩展）
+        grid = {
+            "x": x_coords,
+            "depth": dimension_info["depth_total"],
         }
+        return grid
 
-    @abstractmethod
-    def compute_geometry(self):
-        pass
+    # ------ 公共计算：举架系统（高度、檩位等） ------
+    def compute_jujia(self):
+        cfg = self.config
 
-    @abstractmethod
-    def compute_structure(self):
-        pass
+        pillar_diameter = cfg["pillar_diameter_base"]
+        pillar_height = pillar_diameter * cfg["pillar_height_ratio"]
+
+        beam_length = pillar_diameter * cfg["beam_length_ratio"]
+
+        heights = {
+            "pillar_height": pillar_height,
+            "beam_length": beam_length
+        }
+        return heights
+
+    # ------ 主流程（形态 calculator 会 override） ------
+    def compute(self, building_info):
+        grid = self.compute_grid(building_info["dimension_info"])
+        heights = self.compute_jujia()
+
+        return {
+            "grid": grid,
+            "heights": heights,
+            "config": self.config
+        }

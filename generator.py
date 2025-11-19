@@ -1,36 +1,39 @@
 from core import DataLoader
 from core import FormInferencer
 from core import CalculatorFactory
-from configs import ConfigManager
+# from configs import ConfigManager
 
 
 class Generator:
     def __init__(self, raw_csv_path: str, row: int):
         self.csv_loader = DataLoader(raw_csv_path)
-        self.config_mgr = ConfigManager()
-        self.calc = CalculatorFactory()
+        # self.config_mgr = ConfigManager()
+        self.calcfactory = CalculatorFactory()
 
         self.row = row
 
     def run(self):
         # Step 1: 加载数据（建筑信息）
-        initial_building_data = self.csv_loader.get_complete_building_data(self.row)
+        initialize_building_data = self.csv_loader.get_complete_building_data(self.row)
 
         # Step 2: 根据加载的建筑信息增加推断形态，完善建筑信息，获取建筑类型
-        infer = FormInferencer(initial_building_data)
-        # building_data = infer.building_data
-        building_construction_name = infer.infer_form_name()  # 获取建筑类型名称
+        infer = FormInferencer(initialize_building_data)
 
-        # Step 3: 根据建筑类型名称获取配置
-        config = self.config_mgr.get_building_form(building_construction_name)
+        building_data = infer.building_data
+        building_construction_name = infer._infer_form_name()
 
-        print(building_construction_name)
-        print(config)
+        print(building_data)
+        print(self.calcfactory.create_calculator(building_data["category_info"], building_data["dimension_info"]))
 
         """
-        # 待完善
+        # Step 3: 根据建筑类型，获取计算器配置
+        # -----------------------------------------------------------------------------
+        # 更换写法,待完善
+        # -----------------------------------------------------------------------------
+        basic_info, structure_info, description_info, dimension_info, structure_name = data_loader.load(id)
+        config = config_manager.get(structure_name)
         calc_result = component_calculator.compute(dimension_info, config)
-        
+
         pillar_obj = pillar.create(calc_result['eave_diameter'], calc_result['eave_height'])
         beam_obj = beam.create(calc_result['beam_size'], ...)
         roof_obj = roof.create(calc_result['roof_params'])
