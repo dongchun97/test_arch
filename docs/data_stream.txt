@@ -8,13 +8,15 @@ frame/beam_frame	        beams_coords, beam_obj	同上
 frame/roof_system	        roof_params, roof_obj	同上
 assembler	                所有 coordinates + components + description_info + collection	上层所有模块
 
-data_loader
+原始 building_data
+    ↓  FormInferencer（推断檩数、形态）
+补全 building_data（包含 form_name）
+    ↓  ConfigManager.get_building_form(form_name)
+得到该形态的规则
     ↓
-form_inferencer
+CalculatorFactory 根据 roof_forms → 选择正确类
     ↓
-config_manager
-    ↓
-calculator_factory → calculators/*
+实例化 Calculator
     ↓
 structure/*（utils → components → frame → assembler）
     ↓

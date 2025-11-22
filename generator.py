@@ -1,29 +1,35 @@
 from core import DataLoader
 from core import FormInferencer
+from configs import ConfigManager
 from core import CalculatorFactory
-# from configs import ConfigManager
 
 
 class Generator:
+
+    _cfg = ConfigManager()
+
     def __init__(self, raw_csv_path: str, row: int):
         self.csv_loader = DataLoader(raw_csv_path)
-        # self.config_mgr = ConfigManager()
         self.calcfactory = CalculatorFactory()
 
         self.row = row
 
     def run(self):
-        # Step 1: 加载数据（建筑信息）
-        initialize_building_data = self.csv_loader.get_complete_building_data(self.row)
-
-        # Step 2: 根据加载的建筑信息增加推断形态，完善建筑信息，获取建筑类型
-        infer = FormInferencer(initialize_building_data)
-
-        building_data = infer.building_data
-        building_construction_name = infer._infer_form_name()
-
+        # Step 1: 数据加载和预处理（infer）
+        raw_data = self.csv_loader.get_complete_building_data(self.row)
+        inferencer = FormInferencer(raw_data)
+        building_data = inferencer.run()
         print(building_data)
-        print(self.calcfactory.create_calculator(building_data["category_info"], building_data["dimension_info"]))
+
+        # Step 2: 读取规则（infered_data → rules）
+        form_name = building_data["category_info"]["form_name"]
+        form_rule = self._cfg.get_building_rules(form_name)
+        print(form_name)
+        print(form_rule)
+
+        # Step 3: 创建计算器（factory）
+        calc = CalculatorFactory.create_calculator(building_data)
+        print(calc)
 
         """
         # Step 3: 根据建筑类型，获取计算器配置

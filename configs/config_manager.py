@@ -5,6 +5,7 @@ from copy import deepcopy
 TOML_CONFIG_DIR = Path("configs/rules/")
 JSON_CONFIG_FILE = Path("configs/class_mapping.json")
 
+
 class ClassRegistry:
     """
     负责 JSON 类映射加载（全局加载一次）
@@ -67,9 +68,7 @@ class RuleManager:
     @classmethod
     def get_rule(cls, category: str, key: str = None):
         cls._initialize()
-        return cls._rules.get(category, {}) \
-               .get(category.rstrip("s"), {}) \
-               .get(key)
+        return cls._rules.get(category, {}).get(category.rstrip("s"), {}).get(key)
 
     @classmethod
     def resolve_ref(cls, ref: str):
@@ -87,7 +86,7 @@ class RuleManager:
         return merged
 
     @classmethod
-    def get_building_form(cls, form_name: str) -> dict:
+    def get_building_rules(cls, form_name: str) -> dict:
         cls._initialize()
 
         forms = cls._rules.get("building_forms", {}).get("building_form", {})
@@ -119,17 +118,16 @@ class ConfigManager:
     # ----- 对外统一调用 API -----
 
     @staticmethod
-    def get_building_form(form_name: str) -> dict:
-        return RuleManager.get_building_form(form_name)
+    def get_building_rules(form_name: str) -> dict:
+        return RuleManager.get_building_rules(form_name)
 
     @staticmethod
     def get_class_mapping(roof_form_name: str) -> str:
         return ClassRegistry.get_class_mapping(roof_form_name)
 
 
-
 if __name__ == "__main__":
 
     config_mgr = ConfigManager()
-    print(config_mgr.get_building_form("四檩卷棚小式"))
+    print(config_mgr.get_building_rules("六檩卷棚大式"))
     print(config_mgr.get_class_mapping("歇山"))

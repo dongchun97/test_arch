@@ -1,7 +1,7 @@
 .vscode/
 __pycache__/
-*.blend
 /output/
 /downloads/
 /test/
+*.blend
 *.sh

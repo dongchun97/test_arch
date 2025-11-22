@@ -12,16 +12,18 @@ class FormInferencer:
     def __init__(self, building_data: Dict):
         self.building_data = building_data
 
-        self._run()
-
     def _infer_num_lin(self):
         """
         根据进深与檐步计算檩数和过垄脊距离。
         depth_total // eave_step + 2 = 檩数
         depth_total % eave_step = 过垄脊距离
         """
-        depth_total = float(self.building_data.get("dimension_info", {}).get("depth_total", {}))
-        eave_step = float(self.building_data.get("dimension_info", {}).get("eave_step", {}))
+        depth_total = float(
+            self.building_data.get("dimension_info", {}).get("depth_total", {})
+        )
+        eave_step = float(
+            self.building_data.get("dimension_info", {}).get("eave_step", {})
+        )
 
         num_lin = int(depth_total // eave_step + 2)
         ridge_distance = round(depth_total % eave_step, 3)
@@ -50,8 +52,7 @@ class FormInferencer:
         cn_map = {3: "三", 4: "四", 5: "五", 6: "六", 7: "七", 8: "八"}
         return cn_map.get(num, str(num))
 
-    
-    def _run(self):
+    def run(self):
         """完整推断流程，写回 building_data 并返回"""
         self._infer_num_lin()
 
@@ -59,6 +60,7 @@ class FormInferencer:
         self.building_data["category_info"]["form_name"] = form_name
 
         return self.building_data
+
 
 if __name__ == "__main__":
     from numpy import array
@@ -80,6 +82,6 @@ if __name__ == "__main__":
         },
     }
 
-    form = FormInferencer(test_building_data)
-    print(form._infer_form_name())
-    print(form.building_data)
+    infered_data = FormInferencer(test_building_data).run()
+    # print(infered_data)
+    print(infered_data["category_info"]["form_name"])
