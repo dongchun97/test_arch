@@ -1,6 +1,5 @@
 from generator import Generator
 
-
 def main():
     csv_path = "data/data2.csv"
     generator = Generator(csv_path)

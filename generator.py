@@ -16,20 +16,20 @@ class Generator:
 
     def run(self):
         # Step 1: 数据加载和预处理（infer）
-        raw_data = self.csv_loader.get_complete_building_data(self.row)
-        inferencer = FormInferencer(raw_data)
+        raw_building_data = self.csv_loader.get_complete_building_data(self.row)
+        inferencer = FormInferencer(raw_building_data)
         building_data = inferencer.run()
-        print(building_data)
+        # print(building_data)
 
         # Step 2: 读取规则（infered_data → rules）
         form_name = building_data["category_info"]["form_name"]
         form_rule = self._cfg.get_building_rules(form_name)
-        print(form_name)
-        print(form_rule)
+        # print(form_name)
+        # print(form_rule)
 
         # Step 3: 创建计算器（factory）
         calc = CalculatorFactory.create_calculator(building_data)
-        print(calc)
+        print(calc.compute_grid())
 
         """
         # Step 3: 根据建筑类型，获取计算器配置

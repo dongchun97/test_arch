@@ -45,4 +45,4 @@ if __name__ == "__main__":
             "ridge_distance": 0.1,
         },
     }
-    CalculatorFactory.create_calculator()
+    CalculatorFactory.create_calculator(building_data)

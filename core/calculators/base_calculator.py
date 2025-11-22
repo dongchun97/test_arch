@@ -1,12 +1,12 @@
 # calculators/base_calculator.py
-import abc
+from abc import ABC, abstractmethod
 import logging
 from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
 
-class BaseCalculator(abc.ABC):
+class BaseCalculator(ABC):
     """
     所有屋面形态计算器的基类。
 
@@ -100,7 +100,7 @@ class BaseCalculator(abc.ABC):
     # -------------------------------------------------------
     # 主流程 —— 子类必须 override
     # -------------------------------------------------------
-    @abc.abstractmethod
+    @abstractmethod
     def calculate(self) -> Dict[str, Any]:
         """
         每种屋面形态（歇山、硬山、卷棚、大脊顶等）必须实现自己的主计算逻辑

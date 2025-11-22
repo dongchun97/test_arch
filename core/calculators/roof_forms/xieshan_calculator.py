@@ -14,9 +14,11 @@ class XieshanCalculator(BaseCalculator):
     """
 
     def __init__(self, building_data: dict, form_rule: dict):
-        super().__init__()
-        self.data = building_data
-        self.rule = form_rule
+        super().__init__(building_data, form_rule)
+
+
+    def compute_grid(self):
+        super().compute_grid()
 
     # -----------------------------------------------------
     # 核心入口
