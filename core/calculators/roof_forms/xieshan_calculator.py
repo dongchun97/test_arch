@@ -17,8 +17,11 @@ class XieshanCalculator(BaseCalculator):
         super().__init__(building_data, form_rule)
 
 
-    def compute_grid(self):
-        super().compute_grid()
+    def calculate_grid(self):
+        return super().calculate_grid()
+    
+    def calculate_roof(self):
+        pass
 
     # -----------------------------------------------------
     # 核心入口

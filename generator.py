@@ -29,7 +29,8 @@ class Generator:
 
         # Step 3: 创建计算器（factory）
         calc = CalculatorFactory.create_calculator(building_data)
-        print(calc.compute_grid())
+        print(calc.calculate_grid())
+        print(calc.calculate())
 
         """
         # Step 3: 根据建筑类型，获取计算器配置

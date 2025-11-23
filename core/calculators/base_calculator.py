@@ -24,15 +24,25 @@ class BaseCalculator(ABC):
         self.data = building_data
         self.rule = form_rule
 
+        self.dim=self.data["dimension_info"]
+        self.main_bay=self.dim["bay_widths"][0]
+
+        # 计算结果
+        self.result = {
+            "grid":None,
+            "heights":None,
+            "eave_diameter":None,
+            "eave_height":None
+        }
+
     # -------------------------------------------------------
     # 通用方法：柱网计算
     # -------------------------------------------------------
-    def compute_grid(self) -> Dict[str, Any]:
-        dim = self.data["dimension_info"]
+    def calculate_grid(self) -> Dict[str, Any]:
 
-        num_bays = dim["num_bays"]
-        bay_widths = dim["bay_widths"]
-        depth_total = float(dim["depth_total"])
+        num_bays = self.dim["num_bays"]
+        bay_widths = self.dim["bay_widths"]
+        depth_total = float(self.dim["depth_total"])
 
         # 纵向坐标
         x_coords = [0]
@@ -42,17 +52,33 @@ class BaseCalculator(ABC):
         grid = {
             "num_bays": num_bays,
             "bay_widths": bay_widths,
+            "main_bay": float(self.main_bay),
             "x_coords": x_coords,
             "depth_total": depth_total,
         }
 
         logger.debug(f"[Grid] num_bays={num_bays}, x_coords={x_coords}")
         return grid
+    
+    # -------------------------------------------------------
+    # 通用方法：高度计算
+    # -------------------------------------------------------
+    def calculate_heights(self):
+        """
+        通用高度规则：基于 form_rule 和标准比例。
+        """
+        base_height = self.rule.get("base_height", self.main_bay*0.25)
+        eave_height = self.rule.get("base_ratio", self.main_bay*0.85)
+
+        self.result["heights"] = {
+            "base": base_height,
+            "body": eave_height,
+        }
 
     # -------------------------------------------------------
     # 通用方法：举架（柱高 / 梁长 / 构件比例）
     # -------------------------------------------------------
-    def compute_frame_system(self) -> Dict[str, float]:
+    def calculate_frame_system(self) -> Dict[str, float]:
         """
         基于 form_rule 的比例系数计算主要构件高度。
         典型参数：
@@ -82,20 +108,32 @@ class BaseCalculator(ABC):
     # -------------------------------------------------------
     # 通用方法：屋面坡度与典型构造
     # -------------------------------------------------------
-    def compute_roof_slope(self) -> Dict[str, float]:
+    def calculate_roof_slope(self) -> Dict[str, float]:
         """
         slope_angle / ridge_height_ratio 来自 form_rule
         """
         rule = self.rule
-        dim = self.data["dimension_info"]
 
-        total_depth = float(dim["depth_total"])
+        total_depth = float(self.dim["depth_total"])
         slope_angle = rule.get("roof_slope", 25)
         ridge_ratio = rule.get("ridge_height_ratio", 0.18)
 
         ridge_height = total_depth * ridge_ratio
 
         return {"slope_angle": slope_angle, "ridge_height": ridge_height}
+    
+
+    # -------------------------------------------------------
+    # 屋顶计算（核心差异点）
+    # -------------------------------------------------------
+    @abstractmethod
+    def calculate_roof(self):
+        """
+        各类屋顶（卷棚、歇山、硬山、庑殿等）形态差异巨大。
+        子类负责：脊、坡度、进深/面宽方向的屋面构造。
+        """
+        ...
+
 
     # -------------------------------------------------------
     # 主流程 —— 子类必须 override
@@ -106,6 +144,16 @@ class BaseCalculator(ABC):
         每种屋面形态（歇山、硬山、卷棚、大脊顶等）必须实现自己的主计算逻辑
         """
         pass
+
+
+    # -------------------------------------------------------
+    # 总计算流程
+    # -------------------------------------------------------
+    def calculate_all(self):
+        self.calculate_grid()
+        self.calculate_heights()
+        self.calculate_roof()  # 子类实现
+        return self.result
 
     # -------------------------------------------------------
     # 公共包装：为子类提供标准返回结构
