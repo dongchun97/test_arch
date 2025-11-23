@@ -24,15 +24,13 @@ class BaseCalculator(ABC):
         self.data = building_data
         self.rule = form_rule
 
-        self.dim=self.data["dimension_info"]
-        self.main_bay=self.dim["bay_widths"][0]
+        self.dim = self.data["dimension_info"]
+        self.main_bay = self.dim["bay_widths"][0]
 
         # 计算结果
         self.result = {
-            "grid":None,
-            "heights":None,
-            "eave_diameter":None,
-            "eave_height":None
+            "grid": None,
+            "heights": None,
         }
 
     # -------------------------------------------------------
@@ -59,7 +57,7 @@ class BaseCalculator(ABC):
 
         logger.debug(f"[Grid] num_bays={num_bays}, x_coords={x_coords}")
         return grid
-    
+
     # -------------------------------------------------------
     # 通用方法：高度计算
     # -------------------------------------------------------
@@ -67,8 +65,8 @@ class BaseCalculator(ABC):
         """
         通用高度规则：基于 form_rule 和标准比例。
         """
-        base_height = self.rule.get("base_height", self.main_bay*0.25)
-        eave_height = self.rule.get("base_ratio", self.main_bay*0.85)
+        base_height = self.rule.get("base_height", self.main_bay * 0.25)
+        eave_height = self.rule.get("base_ratio", self.main_bay * 0.85)
 
         self.result["heights"] = {
             "base": base_height,
@@ -121,7 +119,6 @@ class BaseCalculator(ABC):
         ridge_height = total_depth * ridge_ratio
 
         return {"slope_angle": slope_angle, "ridge_height": ridge_height}
-    
 
     # -------------------------------------------------------
     # 屋顶计算（核心差异点）
@@ -134,7 +131,6 @@ class BaseCalculator(ABC):
         """
         ...
 
-
     # -------------------------------------------------------
     # 主流程 —— 子类必须 override
     # -------------------------------------------------------
@@ -145,15 +141,16 @@ class BaseCalculator(ABC):
         """
         pass
 
-
     # -------------------------------------------------------
     # 总计算流程
     # -------------------------------------------------------
     def calculate_all(self):
         self.calculate_grid()
         self.calculate_heights()
-        self.calculate_roof()  # 子类实现
-        return self.result
+        return self._pack(
+            grid=self.result["grid"],
+            heights=self.result["heights"],
+        )
 
     # -------------------------------------------------------
     # 公共包装：为子类提供标准返回结构
