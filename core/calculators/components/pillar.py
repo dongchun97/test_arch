@@ -1,56 +1,87 @@
-# core/calculators/components/pillar.py
-from .base_component import BaseComponentCalculator
-from .dataclasses import ComponentResult
-import math
-import numpy as np
+# calculators/pillar_calculator.py
+
+from dataclasses import dataclass
+from typing import Dict, Callable
 
 
-class PillarCalculator(BaseComponentCalculator):
-    def calculate(self, params: dict) -> ComponentResult:
+@dataclass
+class PillarSpec:
+    diameter: float
+    height: float
+    # 未来可加字段
+
+
+class PillarCalculator:
+    """
+    单一类管理：檐柱、金柱、童柱、角柱等所有的柱子计算逻辑
+    """
+
+    def __init__(self, building_data, config):
+        self.data = building_data
+        self.config = config
+
+        # 分发表：柱类型 -> 对应计算方法
+        self._pillar_dispatcher: Dict[str, Callable] = {
+            "yan_zhu": self._calc_yan_zhu,       # 檐柱
+            "jin_zhu": self._calc_jin_zhu,       # 金柱
+            "tong_zhu": self._calc_tong_zhu,     # 童柱
+            "jiao_zhu": self._calc_jiao_zhu,     # 角柱（如需要）
+        }
+
+    # -----------------------
+    #   外部统一接口
+    # -----------------------
+    def calc_pillar(self, pillar_type: str) -> PillarSpec:
         """
-        必要输入参数（由屋顶/柱网计算器提供）：
-            height          : float    # 柱子总高（到檐口或梁底）
-            base_diameter   : float
-            top_diameter    : float    # 收分后顶部直径
-            position        : Point3D  # 柱心世界坐标
-            segments        : int = 24 # 圆柱面数
-            shoufen_rule    : str = "song"  # 宋式/清式收分曲线
-            pillar_type     : str = "eave"|"gold"|"melon"|"tong"
+        统一计算接口
         """
-        h = params["height"]
-        d0 = params["base_diameter"]
-        d1 = params["top_diameter"]
-        pos = params["position"]
-        seg = params.get("segments", 24)
+        if pillar_type not in self._pillar_dispatcher:
+            raise ValueError(f"Unknown pillar type: {pillar_type}")
 
-        # 收分曲线（宋式为抛物线，清式为直线+卷杀）
-        if params.get("shoufen_rule") == "song":
-            radii = self._song_shoufen_curve(h, d0, d1)
-        else:
-            radii = np.linspace(d0 / 2, d1 / 2, 20)
+        return self._pillar_dispatcher[pillar_type]()
 
-        verts, faces = [], []
-        for i, r in enumerate(radii):
-            z = i / (len(radii) - 1) * h
-            for j in range(seg):
-                theta = 2 * math.pi * j / seg
-                x = r * math.cos(theta)
-                y = r * math.sin(theta)
-                verts.append((x + pos[0], y + pos[1], z + pos[2]))
+    # -----------------------
+    #   下方是若干具体逻辑方法
+    # -----------------------
 
-        # 生成边和面（圆柱）
-        edges, faces = self._cylinder_topology(len(radii), seg)
+    def _calc_yan_zhu(self) -> PillarSpec:
+        span = self.data.main_span
+        ratio = self.config.pillar_diameter_ratio["yan_zhu"]
 
-        return ComponentResult(
-            name=f"{params.get('pillar_type','pillar')}_{params.get('id','')}",
-            type="pillar",
-            vertices=verts,
-            edges=edges,
-            faces=faces,
-            metadata={
-                "pillar_type": params.get("pillar_type"),
-                "base_diameter": d0,
-                "top_diameter": d1,
-                "height": h,
-            },
+        diameter = span * ratio
+        height = self._calc_default_pillar_height()
+
+        return PillarSpec(
+            diameter=diameter,
+            height=height,
         )
+
+    def _calc_jin_zhu(self) -> PillarSpec:
+        span = self.data.secondary_span
+        ratio = self.config.pillar_diameter_ratio["jin_zhu"]
+
+        diameter = span * ratio
+        height = self._calc_default_pillar_height()
+
+        return PillarSpec(
+            diameter=diameter,
+            height=height,
+        )
+
+    def _calc_tong_zhu(self) -> PillarSpec:
+        span = self.data.main_span
+        ratio = self.config.pillar_diameter_ratio["tong_zhu"]
+
+        diameter = span * ratio * 0.8  # 示例：童柱更细
+
+        return PillarSpec(
+            diameter=diameter,
+            height=self._calc_default_pillar_height() * 0.8,
+        )
+
+    # -----------------------
+    #   共用的私有方法
+    # -----------------------
+
+    def _calc_default_pillar_height(self):
+        return self.data.floor_height * self.config.pillar_height_scale

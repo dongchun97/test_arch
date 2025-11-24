@@ -22,18 +22,31 @@ test_arch/
 │    ├── calculator_factory.py        #决定“实例化谁”,根据类别分发计算器；
 │    │
 │    └── calculators/
-│           ├── __init__.py
 │           │
-│           ├── base_calculator.py                   # 所有 calculator 共同基类，柱网计算、举架系统计算
+│           ├── base_calculator.py             # 顶层抽象基类（可选）
 │           │
-│           ├── roof_forms/
-│           │     ├── xieshan_calculator.py   # 歇山
-│           │     ├── yingshan_calculator.py# 硬山
-│           │     ├── wudian_calculator.py    # 庑殿
-│           │     ├── xuanshan_calculator.py  # 悬山
-│           │     └── cuanjian_calculator.py     # 攒尖
+│           ├── components/                    # 构件级计算器（柱、梁、檩、椽）
+│           │     ├── __init__.py
+│           │     ├── base_component_calculator.py
+│           │     ├── pillar_calculator.py
+│           │     ├── beam_calculator.py
+│           │     ├── purlin_calculator.py
+│           │     └── rafter_calculator.py
 │           │
-│           └── components.py                        # 构件级 calculator，包含Column、Beam、Purlin等构件计算类，所有构件计算遵循统一接口 BaseComponentCalculator
+│           ├── structural_system/             # 结构系统计算（柱网、檩架体系、举架、槽形系统）
+│           │     ├── __init__.py
+│           │     ├── pillar_layout_calculator.py   # 刚刚写的柱网坐标计算
+│           │     ├── roof_frame_calculator.py     # 檩、椽、脊槫系统
+│           │     ├── height_system_calculator.py  # 举架系统（柱高、梁高）
+│           │     └── structural_system_calculator.py # 聚合结构系统（调用上面三个）
+│           │
+│           └── roof_forms/                    # 屋面形态（最终外形计算）
+│                 ├── __init__.py
+│                 ├── xieshan_calculator.py      # 歇山
+│                 ├── yingshan_calculator.py     # 硬山
+│                 ├── xuanshan_calculator.py     # 悬山
+│                 ├── wudian_calculator.py       # 庑殿
+│                 └── cuanjian_calculator.py     # 攒尖        
 │
 │
 ├── structure/

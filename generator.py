@@ -25,7 +25,7 @@ class Generator:
         form_name = building_data["category_info"]["form_name"]
         form_rule = self._cfg.get_building_rules(form_name)
         # print(form_name)
-        # print(form_rule)
+        print(form_rule)
 
         # Step 3: 创建计算器（factory）
         calc = CalculatorFactory.create_calculator(building_data)
